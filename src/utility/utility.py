@@ -26,7 +26,7 @@ def convolve2D(data, kernel, stride=(1, 1)):
     [Params]
         data (Array(row, col))   -> Matrix data as input
         kernel (Array(row, col)) -> Matrix kernel as convolution kernel
-        stride (Tuple(int, int)) -> Movement stride, where first element is striding towards row,
+        stride (Tuple(row, col)) -> Movement stride, where first element is striding towards row,
                                     and second element is striding toward col
     [Return]
         convoluted (Array(row, col))
