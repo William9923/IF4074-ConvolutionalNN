@@ -9,7 +9,26 @@ class Sequential:
     [Method]
 
     TODO:
-        - Create convolution computation
+        - Create add layer method
+        - Create summary method
+        - Create predict method
+        - Create convolution computation (fit)
     """
 
-    pass
+    def __init__(self):
+        pass
+
+    def add(self, layer):
+        pass
+
+    def compile(self):
+        pass
+
+    def summary(self):
+        pass
+
+    def fit(self, x, y):
+        pass
+    
+    def predict(self, x):
+        pass

@@ -9,8 +9,12 @@ class Conv2D(Layer):
         NeuronConv2D will be used as neuron in this Layer
 
     [Attributes]
+        input (Array(batch, channels, columns, row))
+        output (Array(batch, channels, columns, row))
 
     [Method]
+        forward_propagation
+        backward_propagation
 
     TODO:
         - Implementing forward propagation
@@ -19,3 +23,18 @@ class Conv2D(Layer):
 
     def __init__(self):
         super().__init__()
+
+    def forward_propagation(self, x):
+        """
+        [Flow-Method]
+            1. Stacking input as virtual batch
+            2. ...
+            3. ...
+
+        [Params]
+            x (Array(batch, channels, columns, row))
+
+        [Return]
+            output (Array(batch, channels, columns, row))
+        """
+        pass
