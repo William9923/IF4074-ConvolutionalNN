@@ -50,16 +50,16 @@ def kernel():
         (
             "Test 1 - Compute 3 channels",
             data(),
-            ((2, 2), (1, 1), 3),
+            ((2, 2), (1, 1), (4, 5, 3)),
             np.array(
                 [
                     np.stack(
                         [
                             np.array(
                                 [
-                                    np.array([4.0, 4.0, 5.0, 2.0]),
-                                    np.array([16.0, 20.0, 12.0, 29.0]),
-                                    np.array([6.0, 8.0, 22.0, 4.0]),
+                                    np.array([5.0, 5.0, 6.0, 3.0]),
+                                    np.array([17.0, 21.0, 13.0, 30.0]),
+                                    np.array([7.0, 9.0, 23.0, 5.0]),
                                 ]
                             )
                             for _ in range(3)
@@ -74,6 +74,8 @@ def kernel():
 )
 def test_neuron_conv2d(name, batch, params, expected_output):
     neuron = NeuronConv2D(*params)
-    neuron._kernels = np.array([kernel() for _ in range(neuron._input_shape)])
+    channels = neuron._input_shape[2]
+    neuron._kernels = np.array([kernel() for _ in range(channels)])
+    neuron._bias = np.ones(neuron._output_shape)
     out = neuron.compute(batch)
     assert (out == expected_output).all(), f'Wrong Output'
