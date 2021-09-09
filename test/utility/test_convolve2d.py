@@ -61,7 +61,7 @@ def kernel():
                     np.array([16.0, 12.0]),
                     np.array([6.0, 22.0]),
                 ]
-            )
+            ),
         ),
         (
             "Test 5 - Stride 1-4",
@@ -72,10 +72,10 @@ def kernel():
                     np.array([16.0]),
                     np.array([6.0]),
                 ]
-            )
-        )
+            ),
+        ),
     ],
 )
-def test_convolve(name, params, expected_output):
+def test_convolve2D(name, params, expected_output):
     out = convolve2D(*params)
     assert (expected_output == out).all(), "Wrong output"
