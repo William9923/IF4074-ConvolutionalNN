@@ -11,9 +11,24 @@ class Activation:
         - Softmax
 
     TODO:
-        - Create ReLU method
-        - Create Sigmoid method
-        - Create Softmax method
+        - Create softmax derivative
     """
 
-    pass
+    @staticmethod
+    def relu(x, deriv = False) :
+        if deriv:
+            return np.ones(x.shape)
+        return np.maximum(0, x)
+
+    @staticmethod
+    def sigmoid(x, deriv=False):
+        if deriv:
+            return x * (1-x)
+        return 1 / (1 + np.exp(-x)) 
+
+
+    @staticmethod
+    def softmax(x, deriv=False):
+        if deriv:
+            pass
+        return np.exp(x) / np.sum(np.exp(x), axis=0)
