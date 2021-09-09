@@ -132,3 +132,6 @@ dmypy.json
 *.png
 *.csv
 .vscode
+
+data/*
+images/*
