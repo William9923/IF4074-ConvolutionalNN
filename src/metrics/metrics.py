@@ -10,22 +10,43 @@ class Metrics:
         - Recall
         - F1
         - Confusion Matrix
-
-    TODO:
-        - Create Accuracy method
-        - Create Precision method
-        - Create Recall method
-        - Create F1 method
     """
 
     @staticmethod
     def accuracy(y_true, y_pred): 
+        """
+        [Flow-Function]
+            1. Assert input length (must be same length!)
+            2. Calculate accuracy
+                Accuracy = (TP + TN)/(TP + TN + FP + FN)
+                    or 
+                Accuracy = (TP + TN) / N
+                where N = Number of data
+                
+        [Params]
+            x Array(float64)
+
+        [Return]
+            output Array(float64)
+        """
         assert(len(y_true) == len(y_pred))
         return (y_true == y_pred) / len(y_true)
 
 
     @staticmethod
     def precision(y_true, y_pred):
+        """
+        [Flow-Function]
+            1. Assert input length (must be same length!)
+            2. Calculate precision
+                Precision = (TP)/(TP + FP)
+                
+        [Params]
+            x Array(float64)
+
+        [Return]
+            output Array(float64)
+        """
         assert(len(y_true) == len(y_pred))
         TP = Metrics._TP(y_true, y_pred) 
         FP = Metrics._FP(y_true, y_pred)
@@ -33,6 +54,18 @@ class Metrics:
 
     @staticmethod 
     def recall(y_true, y_pred):
+        """
+        [Flow-Function]
+            1. Assert input length (must be same length!)
+            2. Calculate recall
+                Recall = (TP)/(TP + FN)
+                
+        [Params]
+            x Array(float64)
+
+        [Return]
+            output Array(float64)
+        """
         assert(len(y_true) == len(y_pred))
         TP = Metrics._TP(y_true, y_pred) 
         FN = Metrics._FN(y_true, y_pred)
@@ -40,13 +73,45 @@ class Metrics:
 
     @staticmethod 
     def f1(y_true, y_pred):
+        """
+        [Flow-Function]
+            1. Assert input length (must be same length!)
+            2. Calculate F1 score
+                F1 =  2 * (precision * recall) / (precision + recall)
+                    or 
+                F1 = TP / (TP + 1/2 * (FP + FN))
+                
+        [Params]
+            x Array(float64)
+
+        [Return]
+            output Array(float64)
+        """
         assert(len(y_true) == len(y_pred))
-        precision = Metrics.precision(y_true, y_pred)
-        recall = Metrics.recall(y_true, y_pred)
-        return 2 * ((precision * recall) / (precision + recall))
+        TP = Metrics._TP(y_true, y_pred) 
+        FP = Metrics._FP(y_true, y_pred)
+        FN = Metrics._FN(y_true, y_pred)
+        return TP / (TP + 0.5 * (FP + FN))
 
     @staticmethod
     def confusion_matrix(y_true, y_pred):
+        """
+        [Flow-Function]
+            1. Assert input length (must be same length!)
+            2. Build the confusion matrix 
+               (Representation)
+               ╔════╦════╗
+               ║ TP ║ FP ║
+               ╠════╬════╣
+               ║ FN ║ TN ║
+               ╚════╩════╝
+                
+        [Params]
+            x Array(float64)
+
+        [Return]
+            output Array(float64)
+        """
         assert(len(y_true) == len(y_pred))
         TP = Metrics._TP(y_true, y_pred)
         TN = Metrics._TN(y_true, y_pred)
