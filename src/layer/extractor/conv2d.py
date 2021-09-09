@@ -14,6 +14,7 @@ class Conv2D(Layer):
     [Attributes]
         input (Array(batch, row, columns, channel))
         output (Array(neuron, batch, row, columns, channel))
+        _neurons (Neuron)
         _filters (int)
         _kernel_shape (Tuple(row, col))
         _stride (Tuple(row, col))
@@ -63,7 +64,7 @@ class Conv2D(Layer):
             input_shape (int) -> Input shape for every neuron. Based on num filter in previous layer
         """
         self._input_shape = input_shape
-        self.neurons = np.array(
+        self._neurons = np.array(
             [
                 NeuronConv2D(
                     self._kernel_shape, self._stride, input_shape=self._input_shape
@@ -115,7 +116,7 @@ class Conv2D(Layer):
             - Saved output can be changed later based on backpropagation later
         """
         self.input = self.padding(batch)
-        output = [neuron.compute(batch) for neuron in self.neurons]
+        output = [neuron.compute(batch) for neuron in self._neurons]
 
         # Save output for every neuron
         self.output = np.array(output)
