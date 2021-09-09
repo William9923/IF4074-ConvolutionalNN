@@ -27,14 +27,14 @@ class Conv2D(Layer):
     def forward_propagation(self, x):
         """
         [Flow-Method]
-            1. Stacking input as virtual batch
+            1. Assign x as input attribute
             2. ...
             3. ...
 
         [Params]
-            x (Array(batch, channels, columns, row))
+            x (Array(batch, row, columns, channels))
 
         [Return]
-            output (Array(batch, channels, columns, row))
+            output (Array(batch, row, columns, channels))
         """
         pass

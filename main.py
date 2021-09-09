@@ -1,3 +1,9 @@
+from mlxtend.data import loadlocal_mnist
+import numpy as np
+
+from src.utility import convolve2D
+
+
 if __name__ == "__main__":
     """
     [Flow]
@@ -10,4 +16,10 @@ if __name__ == "__main__":
         6. Fit the model with normalized train
         7. Predict with normalized test
     """
-    pass
+    x, y = loadlocal_mnist(
+        images_path='images/train-images.idx3-ubyte', 
+        labels_path='images/train-labels.idx1-ubyte'
+    )
+    row, col = 28, 28
+    x = x.reshape(-1, col, row)
+    print(x.shape)

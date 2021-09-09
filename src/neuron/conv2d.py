@@ -23,7 +23,7 @@ class NeuronConv2D:
     def __init__(self, kernel_shape, stride, input_shape=None):
         """
         [Params]
-            kernel_shape (Tuple(row, col)) -> Shape kernel for this neuron 
+            kernel_shape (Tuple(row, col)) -> Shape kernel for this neuron
             stride (Tuple(row, col))       -> Stride movement for convolution computation
             input_shape (int)              -> Input shape is num filter or channels layer before
         """
@@ -33,7 +33,7 @@ class NeuronConv2D:
 
         if not self._input_shape:
             self.build()
-    
+
     def build(self):
         """
         Build kernels based on input_shape owned
@@ -43,7 +43,7 @@ class NeuronConv2D:
             kernel = np.random.rand(*self._kernel_shape)
             self._kernels.append(kernel)
         self._kernels = np.array(self._kernels)
-    
+
     def build(self, input_shape):
         """
         Build kekrnels based on input_shape owned
