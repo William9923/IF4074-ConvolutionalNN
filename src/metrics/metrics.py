@@ -30,7 +30,7 @@ class Metrics:
             output Array(float64)
         """
         assert(len(y_true) == len(y_pred))
-        return (y_true == y_pred) / len(y_true)
+        return (y_true == y_pred).sum() / len(y_true)
 
 
     @staticmethod
@@ -119,8 +119,8 @@ class Metrics:
         FN = Metrics._FN(y_true, y_pred)
         return np.array(
             [
-                np.array([TP, FP]),
-                np.array([FN, TN]),
+                [TP, FP],
+                [FN, TN],
             ]
         )
 

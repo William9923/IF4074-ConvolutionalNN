@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from numpy.testing import assert_array_almost_equal
+
 from src.activation import Activation
 
 @pytest.mark.parametrize("name, input, expected_output", [
@@ -25,7 +26,7 @@ def test_Activation_ReLU(name, input, expected_output):
     try :
         assert_array_almost_equal(expected_output, result, decimal=5)
     except AssertionError as err:
-        assert False, f"{expected_output} expected, but get {result}"
+        assert False, f"{name} | {expected_output} expected, but get {result}"
 
 @pytest.mark.parametrize("name, input, expected_output", [
     (
@@ -49,7 +50,7 @@ def test_Activation_ReLU_derivative(name, input, expected_output):
     try :
         assert_array_almost_equal(expected_output, result, decimal=5)
     except AssertionError as err:
-        assert False, f"{expected_output} expected, but get {result}"
+        assert False, f"{name} | {expected_output} expected, but get {result}"
 
 
 @pytest.mark.parametrize("name, input, expected_output", [
@@ -69,7 +70,7 @@ def test_Activation_Sigmoid(name, input, expected_output):
     try :
         assert_array_almost_equal(expected_output, result, decimal=5)
     except AssertionError as err:
-        assert False, f"{expected_output} expected, but get {result}"  
+        assert False, f"{name} | {expected_output} expected, but get {result}"  
 
 
 @pytest.mark.parametrize("name, input, expected_output", [
@@ -89,7 +90,7 @@ def test_Activation_Sigmoid_derivative(name, input, expected_output):
     try :
         assert_array_almost_equal(expected_output, result, decimal=5)
     except AssertionError as err:
-        assert False, f"{expected_output} expected, but get {result}"
+        assert False, f"{name} | {expected_output} expected, but get {result}"
 
 @pytest.mark.parametrize("name, input, expected_output", [
     (
@@ -103,5 +104,5 @@ def test_Activation_Softmax(name, input, expected_output):
     try :
         assert_array_almost_equal(expected_output, result, decimal=5)
     except AssertionError as err:
-        assert False, f"{expected_output} expected, but get {result}"
+        assert False, f"{name} | {expected_output} expected, but get {result}"
 
