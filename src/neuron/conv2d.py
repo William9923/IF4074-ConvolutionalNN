@@ -48,9 +48,10 @@ class NeuronConv2D:
     def compute(self, batch):
         """
         [Flow-Method]
-            1. Loop through all batches together with all kernels
-            2. Calculate convolution with convolve2D
-            3. Convert to numpy array for output
+            1. Loop through all batches
+            2. Loop through all matrix based on channel, together with kernels
+            3. Calculate convolution with convolve2D
+            4. Convert to numpy array for output
 
         [Params]
             batch (Array(batch, row, col, channel))
