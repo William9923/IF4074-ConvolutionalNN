@@ -3,6 +3,7 @@ import numpy as np
 
 from src.utility import convolve2D
 
+
 def data():
     return np.array(
         [
@@ -13,6 +14,7 @@ def data():
         ]
     )
 
+
 def kernel():
     return np.array(
         [
@@ -21,69 +23,59 @@ def kernel():
         ]
     )
 
-def test_stride_1_1():
-    stride = (1, 1)
-    params = (data(), kernel(), stride)
-    expected = np.array(
-        [
-            np.array([4., 4., 5., 2.]),
-            np.array([16., 20., 12., 29.]),
-            np.array([6., 8., 22., 4.]),
-        ]
-    )
+
+@pytest.mark.parametrize(
+    "name, params, expected_output",
+    [
+        (
+            "Test 1 - Stride 1-1",
+            (data(), kernel(), (1, 1)),
+            np.array(
+                [
+                    np.array([4.0, 4.0, 5.0, 2.0]),
+                    np.array([16.0, 20.0, 12.0, 29.0]),
+                    np.array([6.0, 8.0, 22.0, 4.0]),
+                ]
+            ),
+        ),
+        (
+            "Test 2 - Stride 2-1",
+            (data(), kernel(), (2, 1)),
+            np.array([np.array([4.0, 4.0, 5.0, 2.0]), np.array([6.0, 8.0, 22.0, 4.0])]),
+        ),
+        (
+            "Test 3 - Stride 3-1",
+            (data(), kernel(), (3, 1)),
+            np.array(
+                [
+                    np.array([4.0, 4.0, 5.0, 2.0]),
+                ]
+            ),
+        ),
+        (
+            "Test 4 - Stride 1-2",
+            (data(), kernel(), (1, 2)),
+            np.array(
+                [
+                    np.array([4.0, 5.0]),
+                    np.array([16.0, 12.0]),
+                    np.array([6.0, 22.0]),
+                ]
+            )
+        ),
+        (
+            "Test 5 - Stride 1-4",
+            (data(), kernel(), (1, 4)),
+            np.array(
+                [
+                    np.array([4.0]),
+                    np.array([16.0]),
+                    np.array([6.0]),
+                ]
+            )
+        )
+    ],
+)
+def test_convolve(name, params, expected_output):
     out = convolve2D(*params)
-
-    assert (expected == out).all(), 'Wrong output'
-
-def test_stride_2_1():
-    stride = (2, 1)
-    params = (data(), kernel(), stride)
-    expected = np.array(
-        [
-            np.array([4., 4., 5., 2.]),
-            np.array([6., 8., 22., 4.])
-        ]
-    )
-    out = convolve2D(*params)
-
-    assert (expected == out).all(), 'Wrong output'
-
-def test_stride_3_1():
-    stride = (3, 1)
-    params = (data(), kernel(), stride)
-    expected = np.array(
-        [
-            np.array([4., 4., 5., 2.]),
-        ]
-    )
-    out = convolve2D(*params)
-
-    assert (expected == out).all(), 'Wrong output'
-
-def test_stride_1_2():
-    stride = (1, 2)
-    params = (data(), kernel(), stride)
-    expected = np.array(
-        [
-            np.array([4., 5.]),
-            np.array([16., 12.]),
-            np.array([6., 22.]),
-        ]
-    )
-    out = convolve2D(*params)
-
-    assert (expected == out).all(), 'Wrong output'
-
-def test_stride_1_4():
-    stride = (1, 4)
-    params = (data(), kernel(), stride)
-    expected = np.array(
-        [
-            np.array([4.]),
-            np.array([16.]),
-            np.array([6.]),
-        ]
-    )
-    out = convolve2D(*params)
-
-    assert (expected == out).all(), 'Wrong output'
+    assert (expected_output == out).all(), "Wrong output"
