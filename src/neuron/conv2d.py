@@ -10,12 +10,12 @@ class NeuronConv2D:
         This class contains convolution computation
 
     [Attributes]
-        _strides
-        _kernel_shape
-        _input_shape
-        _output_shape
-        _kernels
-        _bias
+        _strides (Tuple(row, col))
+        _kernel_shape (Tuple(row, col))
+        _input_shape (Tuple(row, col, channels))
+        _output_shape (Tuple(row, col, channels))
+        _kernels (Array(row, col, channels)) -> Shape based on kernel_shape
+        _bias (Array(row, col, channels)) -> Shape based on output shape
 
     [Method]
         build

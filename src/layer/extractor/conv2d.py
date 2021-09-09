@@ -15,6 +15,7 @@ class Conv2D(Layer):
         input (Array(batch, row, columns, channel))
         output (Array(neuron, batch, row, columns, channel))
         input_shape Tuple(row, col, channel)
+        output_shape Tuple(row, col, channel)
         _neurons (Neuron)
         _filters (int)
         _kernel_shape (Tuple(row, col))
