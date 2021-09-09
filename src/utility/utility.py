@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def pad2D(data, pad=(1, 1, 1, 1), constant_values=0):
     """
     [Flow-Function]
@@ -50,3 +49,31 @@ def convolve2D(data, kernel, stride=(1, 1)):
             convoluted[i_row][i_col] = np.sum(mult_two_mat)
 
     return convoluted
+
+def normalize_result(pred):
+    """
+    [Flow-Function]
+        1. Get all index from each highest value of the sequence
+        ps: Assumption for this function, index <=> class (for classification label)
+        (representation)
+(Class)    0     1     2  
+        ╔═════╦═════╦═════╗
+        ║ 0.2 ║ 0.3 ║ 0.5 ║ → 2 
+        ╠═════╬═════╬═════╣
+        ║ 0.1 ║ 0.1 ║ 0.8 ║ → 2
+        ╠═════╬═════╬═════╣
+        ║ 0.2 ║ 0.1 ║ 0.7 ║ → 2
+        ╠═════╬═════╬═════╣ 
+        ║ 0.5 ║ 0.1 ║ 0.4 ║ → 0
+        ╠═════╬═════╬═════╣
+        ║ 0.4 ║ 0.4 ║ 0.2 ║ → 0 (first)
+        ╚═════╩═════╩═════╝
+
+    [Params]
+        pred Array(batch, predictions) -> multiple sequence (batch) from softmax result
+
+    [Return]
+        output Array(float)
+    """
+    return np.argmax(pred, axis=1)
+
