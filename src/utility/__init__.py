@@ -1,1 +1,1 @@
-from src.utility.utility import Utility
+from src.utility.utility import normalize_result
