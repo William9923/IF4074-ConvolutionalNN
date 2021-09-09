@@ -30,29 +30,20 @@ class NeuronConv2D:
         self._stride = stride
         self._kernel_shape = kernel_shape
         self._input_shape = input_shape
-
-        if not self._input_shape:
-            self.build()
-
-    def build(self):
-        """
-        Build kernels based on input_shape owned
-        """
-        self._kernels = []
-        for _ in range(self._input_shape):
-            kernel = np.random.rand(*self._kernel_shape)
-            self._kernels.append(kernel)
-        self._kernels = np.array(self._kernels)
+        if self._input_shape:
+            self.build(self._input_shape)
 
     def build(self, input_shape):
         """
-        Build kekrnels based on input_shape owned
+        Build kernels based on input_shape owned
 
         [Params]
             input_shape (int) -> Input shape is num filter or channels layer before
         """
         self._input_shape = input_shape
-        self.build()
+        self._kernels = np.array(
+            [np.random.rand(*self._kernel_shape) for _ in range(self._input_shape)]
+        )
 
     def compute(self, batch):
         """
@@ -62,13 +53,18 @@ class NeuronConv2D:
             3. Convert to numpy array for output
 
         [Params]
-            x (Array(batch, row, col, channel))
+            batch (Array(batch, row, col, channel))
 
         [Return]
             out (Array(batch, row, col, channel))
         """
         out = []
-        for x, kernel in zip(batch, self._kernel):
-            out.append(convolve2D(x, kernel, self._stride))
-        out = np.array(out)
+        for x in batch:  # x (Array(row, col, channel))
+            convoluted = []
+            for matrix, kernel in zip(np.rollaxis(x, 2), self._kernels): # matrix (Array(row, col))
+                convoluted.append(convolve2D(matrix, kernel, self._stride))
+            convoluted = np.stack(convoluted, axis=-1) # convoluted (Array(row, col, channel))
+            out.append(convoluted)
+
+        out = np.array(out) # out (Array(batch, row, col, channel))
         return out
