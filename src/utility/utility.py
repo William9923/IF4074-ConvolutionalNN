@@ -70,7 +70,7 @@ def normalize_result(pred):
         ╚═════╩═════╩═════╝
 
     [Params]
-        x Array(Array(float)) -> multiple sequence (batch) from softmax result
+        pred Array(batch, predictions) -> multiple sequence (batch) from softmax result
 
     [Return]
         output Array(float)

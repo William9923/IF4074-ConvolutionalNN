@@ -24,10 +24,11 @@ class Metrics:
                 where N = Number of data
                 
         [Params]
-            x Array(float64)
+            y_true Array(float64)
+            y_pred Array(float64)
 
         [Return]
-            output Array(float64)
+            output float64
         """
         assert(len(y_true) == len(y_pred))
         return (y_true == y_pred).sum() / len(y_true)
@@ -42,10 +43,11 @@ class Metrics:
                 Precision = (TP)/(TP + FP)
                 
         [Params]
-            x Array(float64)
+            y_true Array(float64)
+            y_pred Array(float64)
 
         [Return]
-            output Array(float64)
+            output float64
         """
         assert(len(y_true) == len(y_pred))
         TP = Metrics._TP(y_true, y_pred) 
@@ -61,10 +63,11 @@ class Metrics:
                 Recall = (TP)/(TP + FN)
                 
         [Params]
-            x Array(float64)
+            y_true Array(float64)
+            y_pred Array(float64)
 
         [Return]
-            output Array(float64)
+            output float64
         """
         assert(len(y_true) == len(y_pred))
         TP = Metrics._TP(y_true, y_pred) 
@@ -82,10 +85,11 @@ class Metrics:
                 F1 = TP / (TP + 1/2 * (FP + FN))
                 
         [Params]
-            x Array(float64)
+            y_true Array(float64)
+            y_pred Array(float64)
 
         [Return]
-            output Array(float64)
+            output float64
         """
         assert(len(y_true) == len(y_pred))
         TP = Metrics._TP(y_true, y_pred) 
@@ -107,10 +111,11 @@ class Metrics:
                ╚════╩════╝
                 
         [Params]
-            x Array(float64)
+            y_true Array(float64)
+            y_pred Array(float64)
 
         [Return]
-            output Array(float64)
+            output Array(float64)(2 x 2)
         """
         assert(len(y_true) == len(y_pred))
         TP = Metrics._TP(y_true, y_pred)
