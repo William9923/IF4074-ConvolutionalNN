@@ -6,7 +6,7 @@ from src.utility import normalize_result
 
 @pytest.mark.parametrize("name,  input, expected_output", [
     (
-        "Test Accuracy - 100%",
+        "Test Normalize Result",
         np.array([
             [0.2,0.3,0.5],
             [0.1,0.1,0.8],
