@@ -126,3 +126,35 @@ def normalize_result(pred):
             output Array(float)
     """
     return np.argmax(pred, axis=1)
+
+def pooling2D(data, stride, size, shape, type):
+    """
+    [Flow-Function]
+        1. Create new feature map with output shape
+        2. Slice the matrix based on its stride and filter size
+        3. Get its max/average value from sliced matrix
+        4. Fill feature map with its max/average value (from every sliced matrix)
+
+    [Params]
+        data (Array(row, col))   -> Matrix data as input
+        stride (Tuple(row, col)) -> Movement stride, where first element is striding towards row,
+                                    and second element is striding toward col
+        size (Tuple(row, col)) -> Size of the filter
+        shape(Tuple(row, col, depth)) -> Size of convoluted shape
+        type(String)    -> Type of the pooling
+        
+    [Return]
+        pooled2D (Array(row, col))
+    """
+    n_row, n_col = data.shape
+    pooled2D = np.ones(shape[:2])
+
+    for i_row_pool, i_row in enumerate(range(0, n_row - size[0] + 1, stride[0])):
+        for i_col_pool, i_col in enumerate(range(0, n_col - size[1] + 1, stride[1])):
+            sliced = data[
+                            i_row : i_row + size[0],
+                            i_col : i_col + size[1],
+                        ]
+            pooled2D[i_row_pool][i_col_pool] = type == 'max' and sliced.max() or sliced.mean()
+    
+    return pooled2D

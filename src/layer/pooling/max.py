@@ -1,6 +1,6 @@
 import numpy as np
 from src.layer.interface import Layer
-from src.utility import pad2D
+from src.utility import pooling2D, pad2D, calc_convoluted_shape
 
 class MaxPooling2D(Layer):
     """
@@ -70,30 +70,26 @@ class MaxPooling2D(Layer):
 
         """
         self.input = self.padding(batch)
-        _, n_row, n_col, n_depth = self.input.shape
-        stride_row, stride_col = self.stride
-
 
         out = []
-        for x in batch:  # x (Array(row, col, channel))
-            pooled_sizes = (
-                (n_row - self.size[0]) // stride_row + 1,
-                (n_col - self.size[1]) // stride_col + 1,
-                n_depth
-            )
-            pooled = np.ones(pooled_sizes)
+        for x in self.input:  # x (Array(row, col, channel))
+            pooled_sizes = calc_convoluted_shape(x.shape, self.size, self.stride)
+            pooled2D = []
+            for matrix in np.rollaxis(x, 2):
+                # matrix (Array(row, col))
+                pooled = pooling2D(
+                    matrix,
+                    self.stride,
+                    self.size,
+                    pooled_sizes,
+                    'max'
+                )
+                pooled2D.append(pooled)
 
-            for i_row_pool, i_row in enumerate(range(0, n_row - self.size[0] + 1, stride_row)):
-                for i_col_pool, i_col in enumerate(range(0, n_col - self.size[1] + 1, stride_col)):
-                    for i_depth_pool, i_depth in enumerate(range(0, n_depth)):
-                        sliced = x[
-                            i_row : i_row + self.size[0],
-                            i_col : i_col + self.size[1],
-                            i_depth
-                        ]
-                        pooled[i_row_pool][i_col_pool][i_depth_pool] = sliced.max()
+            pooled2D = np.stack(pooled2D, axis= -1)
+            # pooled2D (Array(row, col, channel))
+            out.append(pooled2D)
 
-            out.append(pooled)
-
+        
         out = np.array(out)  # out (Array(batch, row, col, channel))
         return out
