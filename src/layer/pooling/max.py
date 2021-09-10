@@ -95,4 +95,5 @@ class MaxPooling2D(Layer):
 
             out.append(pooled)
 
+        out = np.array(out)  # out (Array(batch, row, col, channel))
         return out
