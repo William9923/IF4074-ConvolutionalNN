@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Metrics:
     """
     This is a static class contains all metrics for evaluation.
@@ -13,16 +14,16 @@ class Metrics:
     """
 
     @staticmethod
-    def accuracy(y_true, y_pred): 
+    def accuracy(y_true, y_pred):
         """
         [Flow-Function]
             1. Assert input length (must be same length!)
             2. Calculate accuracy
                 Accuracy = (TP + TN)/(TP + TN + FP + FN)
-                    or 
+                    or
                 Accuracy = (TP + TN) / N
                 where N = Number of data
-                
+
         [Params]
             y_true Array(float64)
             y_pred Array(float64)
@@ -30,9 +31,8 @@ class Metrics:
         [Return]
             output float64
         """
-        assert(len(y_true) == len(y_pred))
+        assert len(y_true) == len(y_pred)
         return (y_true == y_pred).sum() / len(y_true)
-
 
     @staticmethod
     def precision(y_true, y_pred):
@@ -41,7 +41,7 @@ class Metrics:
             1. Assert input length (must be same length!)
             2. Calculate precision
                 Precision = (TP)/(TP + FP)
-                
+
         [Params]
             y_true Array(float64)
             y_pred Array(float64)
@@ -49,19 +49,19 @@ class Metrics:
         [Return]
             output float64
         """
-        assert(len(y_true) == len(y_pred))
-        TP = Metrics._TP(y_true, y_pred) 
+        assert len(y_true) == len(y_pred)
+        TP = Metrics._TP(y_true, y_pred)
         FP = Metrics._FP(y_true, y_pred)
         return TP / (TP + FP)
 
-    @staticmethod 
+    @staticmethod
     def recall(y_true, y_pred):
         """
         [Flow-Function]
             1. Assert input length (must be same length!)
             2. Calculate recall
                 Recall = (TP)/(TP + FN)
-                
+
         [Params]
             y_true Array(float64)
             y_pred Array(float64)
@@ -69,21 +69,21 @@ class Metrics:
         [Return]
             output float64
         """
-        assert(len(y_true) == len(y_pred))
-        TP = Metrics._TP(y_true, y_pred) 
+        assert len(y_true) == len(y_pred)
+        TP = Metrics._TP(y_true, y_pred)
         FN = Metrics._FN(y_true, y_pred)
         return TP / (TP + FN)
 
-    @staticmethod 
+    @staticmethod
     def f1(y_true, y_pred):
         """
         [Flow-Function]
             1. Assert input length (must be same length!)
             2. Calculate F1 score
                 F1 =  2 * (precision * recall) / (precision + recall)
-                    or 
+                    or
                 F1 = TP / (TP + 1/2 * (FP + FN))
-                
+
         [Params]
             y_true Array(float64)
             y_pred Array(float64)
@@ -91,8 +91,8 @@ class Metrics:
         [Return]
             output float64
         """
-        assert(len(y_true) == len(y_pred))
-        TP = Metrics._TP(y_true, y_pred) 
+        assert len(y_true) == len(y_pred)
+        TP = Metrics._TP(y_true, y_pred)
         FP = Metrics._FP(y_true, y_pred)
         FN = Metrics._FN(y_true, y_pred)
         return TP / (TP + 0.5 * (FP + FN))
@@ -102,14 +102,14 @@ class Metrics:
         """
         [Flow-Function]
             1. Assert input length (must be same length!)
-            2. Build the confusion matrix 
+            2. Build the confusion matrix
                (Representation)
                ╔════╦════╗
                ║ TP ║ FP ║
                ╠════╬════╣
                ║ FN ║ TN ║
                ╚════╩════╝
-                
+
         [Params]
             y_true Array(float64)
             y_pred Array(float64)
@@ -117,7 +117,7 @@ class Metrics:
         [Return]
             output Array(float64)(2 x 2)
         """
-        assert(len(y_true) == len(y_pred))
+        assert len(y_true) == len(y_pred)
         TP = Metrics._TP(y_true, y_pred)
         TN = Metrics._TN(y_true, y_pred)
         FP = Metrics._FP(y_true, y_pred)
@@ -131,26 +131,20 @@ class Metrics:
 
     @staticmethod
     def _TP(y_true, y_pred):
-        assert(len(y_true) == len(y_pred))
+        assert len(y_true) == len(y_pred)
         return ((y_pred == 1) & (y_true == 1)).sum()
 
-    @staticmethod 
+    @staticmethod
     def _TN(y_true, y_pred):
-        assert(len(y_true) == len(y_pred)) 
+        assert len(y_true) == len(y_pred)
         return ((y_pred == 0) & (y_true == 0)).sum()
 
     @staticmethod
     def _FP(y_true, y_pred):
-        assert(len(y_true) == len(y_pred))  
+        assert len(y_true) == len(y_pred)
         return ((y_pred == 1) & (y_true == 0)).sum()
-    
+
     @staticmethod
     def _FN(y_true, y_pred):
-        assert(len(y_true) == len(y_pred))  
+        assert len(y_true) == len(y_pred)
         return ((y_pred == 0) & (y_true == 1)).sum()
-
-    
-
-
-
-    
