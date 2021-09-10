@@ -127,7 +127,7 @@ class Conv2D(Layer):
             - Saved output can be changed later based on backpropagation later
         """
         self.input = self.padding(batch)
-        output = [neuron.compute(batch) for neuron in self._neurons]
+        output = [neuron.compute(self.input) for neuron in self._neurons]
 
         # Save output for every neuron
         self.output = np.array(output)
