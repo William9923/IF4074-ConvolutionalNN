@@ -173,5 +173,5 @@ def data(matrix):
 )
 def test_max_pooling_propagate(name, batch, params, expected_output):
     layer = MaxPooling2D(*params)
-    out = layer.propagate(batch)
+    out = layer.forward_propagation(batch)
     np.testing.assert_equal(out, expected_output)

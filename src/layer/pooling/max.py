@@ -19,7 +19,6 @@ class MaxPooling2D(Layer):
     [Method]
 
     TODO:
-        - Implementing forward propagation
         - Implementing backward propagation
     """
 
@@ -78,7 +77,7 @@ class MaxPooling2D(Layer):
         out = np.array(out)  # out (Array(batch, row, col, channel))
         return out
 
-    def propagate(self, batch):
+    def forward_propagation(self, batch):
         """
         [Flow-Method]
            1. Assign batch as input attribute
