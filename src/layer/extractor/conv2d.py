@@ -2,7 +2,7 @@ import numpy as np
 
 from src.layer.interface import Layer
 from src.neuron import NeuronConv2D
-from src.utility import pad2D
+from src.utility import pad2D, calc_convoluted_shape, calc_input_shape_with_padding
 
 
 class Conv2D(Layer):
@@ -14,11 +14,12 @@ class Conv2D(Layer):
     [Attributes]
         input (Array(batch, row, columns, channel))
         output (Array(neuron, batch, row, columns, channel))
+        input_shape Tuple(row, col, channel)
+        output_shape Tuple(row, col, channel)
         _neurons (Neuron)
         _filters (int)
         _kernel_shape (Tuple(row, col))
         _stride (Tuple(row, col))
-        _input_shape (int)
         _padding (Tuple(top, bot, left, right))
 
     [Method]
@@ -40,34 +41,44 @@ class Conv2D(Layer):
     ):
         """
         [Params]
-            filters (int)                          -> Num Neurons in 1 layer
-            kernel_shape (Tuple(row, col))         -> Shape kernel for all neurons in this layer
-            stride (Tuple(row, col))               -> Stride movement for convolution computation
-            input_shape (int)                      -> Input shape for every neuron. Based on num filter in previous layer
-            padding (Tuple(top, bot, left, right)) -> Padding dataset before computed
+            filters (int)                           -> Num Neurons in 1 layer
+            kernel_shape (Tuple(row, col))          -> Shape kernel for all neurons in this layer
+            stride (Tuple(row, col))                -> Stride movement for convolution computation
+            input_shape (Tuple(row, col, channels)) -> Input shape for every neuron. Based on num filter in previous layer
+            padding (Tuple(top, bot, left, right))  -> Padding dataset before computed
         """
         super().__init__()
         self._filters = filters
         self._kernel_shape = kernel_shape
         self._stride = stride
-        self._input_shape = input_shape
         self._padding = padding
 
-        if self._input_shape:
-            self.build(self._input_shape)
+        if input_shape:
+            self.build(input_shape)
 
     def build(self, input_shape):
         """
         Build Layers based on input_shape owned
 
+        [Flow-Method]
+            1. Calculate raw input shape with padding parameters
+            2. Calculate output shape based on input shape, kernel shape, and stride
+            3. Create neurons as many as _filters attributes
+
         [Params]
-            input_shape (int) -> Input shape for every neuron. Based on num filter in previous layer
+            input_shape (Tuple(row, col, channels)) -> Input shape for every neuron. Based on output in previous layer
         """
-        self._input_shape = input_shape
+        self.input_shape = calc_input_shape_with_padding(input_shape, self._padding)
+        self.output_shape = calc_convoluted_shape(
+            self.input_shape, self._kernel_shape, self._stride
+        )
         self._neurons = np.array(
             [
                 NeuronConv2D(
-                    self._kernel_shape, self._stride, input_shape=self._input_shape
+                    self._kernel_shape,
+                    self._stride,
+                    input_shape=self.input_shape,
+                    output_shape=self.output_shape,
                 )
                 for _ in range(self._filters)
             ]
@@ -80,10 +91,10 @@ class Conv2D(Layer):
             2. Loop through all matrix based on channel
             3. Pad matrix with padding attribute
             4. Convert to onumpy array for output
-        
+
         [Params]
             batch (Array(batch, row, col, channel))
-        
+
         [Return]
             out (Array(batch, row, col, channel))
         """

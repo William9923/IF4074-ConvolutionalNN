@@ -50,16 +50,16 @@ def kernel():
         (
             "Test 1 - Forward 10 neurons",
             data(),
-            (10, (2, 2), (1, 1), 3),
+            (10, (2, 2), (1, 1), (0,0,0,0), (4, 5, 3)),
             np.array(
                 [
                     np.stack(
                         [
                             np.array(
                                 [
-                                    np.array([4.0, 4.0, 5.0, 2.0]) * 3,
-                                    np.array([16.0, 20.0, 12.0, 29.0]) * 3,
-                                    np.array([6.0, 8.0, 22.0, 4.0]) * 3,
+                                    np.array([5.0, 5.0, 6.0, 3.0]) * 3,
+                                    np.array([17.0, 21.0, 13.0, 30.0]) * 3,
+                                    np.array([7.0, 9.0, 23.0, 5.0]) * 3,
                                 ]
                             )
                             for _ in range(10)
@@ -73,10 +73,11 @@ def kernel():
     ],
 )
 def test_forward_layer_conv2d(name, batch, params, expected_output):
-    params = (10, (2, 2), (1, 1), (0, 0, 0, 0), 3)
     layer = Conv2D(*params)
+    channels = layer.input_shape[2]
     for neuron in layer._neurons:
-        neuron._kernels = np.array([kernel() for _ in range(neuron._input_shape)])
+        neuron._kernels = np.array([kernel() for _ in range(channels)])
+        neuron._bias = np.ones(neuron._output_shape)
     out = layer.forward_propagation(batch)
 
     assert (out == expected_output).all(), f"Wrong {out.shape} {expected_output.shape}"
