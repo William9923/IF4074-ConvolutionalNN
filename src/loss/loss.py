@@ -35,8 +35,8 @@ class Loss:
         """
         assert len(y_true) == len(y_pred)
         if deriv:
-            return (-2 * (y_true - y_pred)).mean()
-        return ((y_pred - y_true) ** 2).mean()
+            return (-1 * (y_true - y_pred))
+        return (0.5 * (y_true - y_pred) ** 2).mean()
 
     @staticmethod
     def binary_cross_entropy(y_true, y_pred, deriv=False):
@@ -46,7 +46,7 @@ class Loss:
             2. If derivative, use :
                 f'(x) = ∂f(x)/∂oi = - (ti/oi) + (1 - ti) / (1-oi)  -> oi = prediction(x)
             3. If not (normal calculation), use :
-                f(x) = -1 * Σ(ti * log(oi)) + (1 - ti) * log(1 - oi)
+                f(x) = -1/n * Σ(ti * log(oi)) + (1 - ti) * log(1 - oi)
         
         [Notes]
             Can only be used for binary classification. Input assumption from an sigmoid activation func output 
@@ -56,7 +56,7 @@ class Loss:
             y_pred Array(N) -> N : number of instance
 
         [Return]
-            output scalar(float64)
+            output scalar(float64) | Array(float64) for derivative
         """
         assert len(y_true) == len(y_pred)
         if deriv:
@@ -70,12 +70,16 @@ class Loss:
         [Flow-Function]
             1. Check if using derivative option
             2. If derivative, use :
-                pass
+                f'(x) = ∂f(x)/∂oi = - (tij + oij) + (1 - zij) / (1 - oij)
             3. If not (normal calculation), use :
-                f(x) = max(0, x)
+                f(x) = -1/n * Σ(p(x) * log(q(x)))
+                with :
+                    n : total data
+                    p : acts as a selector
+                    q : acts as selector for non class
         
         [Notes]
-            Binary / Multi classification. Input assumption from an softmax activation func output (one-hot encoded).
+            Multi (one-hot encoded) classification. Input assumption from an softmax activation func output (one-hot encoded).
         
         [Params]
             y_true Array(N, k)     -> N : number of instance, k : number of class
@@ -83,11 +87,11 @@ class Loss:
             epsilon float64        -> Avoiding the division by zero problem
 
         [Return]
-            output scalar(float64)
+            output scalar(float64) | Array(float64) for derivative 
         """
         assert len(y_true) == len(y_pred)
         if deriv:
-            pass
+            return np.array([Loss.binary_cross_entropy(true, pred, deriv=True) for true, pred in zip(y_true, y_pred)])
         y_pred = np.clip(y_pred, epsilon, 1. - epsilon)
         N = y_pred.shape[0]
         ce = -np.sum(y_true*np.log(y_pred))/N
