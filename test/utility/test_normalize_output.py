@@ -8,33 +8,26 @@ from src.utility import (
     calc_input_shape_with_padding,
 )
 
+@pytest.mark.parametrize("name,  input, expected_output", [
+    (
+        "Test Normalize Result",
+        np.array([
+            [0.2,0.3,0.5],
+            [0.1,0.1,0.8],
+            [0.2,0.1,0.7],
+            [0.5,0.1,0.4],
+            [0.4,0.4,0.2],
+        ]),
+        np.array([
+            2,
+            2,
+            2,
+            0,
+            0,
+        ]),
+    ),
+])
 
-@pytest.mark.parametrize(
-    "name, input, expected_output",
-    [
-        (
-            "Test Accuracy - 100%",
-            np.array(
-                [
-                    [0.2, 0.3, 0.5],
-                    [0.1, 0.1, 0.8],
-                    [0.2, 0.1, 0.7],
-                    [0.5, 0.1, 0.4],
-                    [0.4, 0.4, 0.2],
-                ]
-            ),
-            np.array(
-                [
-                    2,
-                    2,
-                    2,
-                    0,
-                    0,
-                ]
-            ),
-        ),
-    ],
-)
 def test_Utility_normalize_result(name, input, expected_output):
     res = normalize_result(input)
     try:
