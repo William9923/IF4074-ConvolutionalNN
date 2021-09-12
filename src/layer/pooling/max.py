@@ -22,7 +22,7 @@ class MaxPooling2D(Layer):
         - Implementing backward propagation
     """
 
-    def __init__(self, size, stride, padding=(0, 0, 0, 0), input_shape=None):
+    def __init__(self, size, stride, padding=(0, 0, 0, 0), input_shape=None, name='max_pooling'):
         """
         [Params]
             size (Tuple(row, col)) -> Size of the filter (output shape)
@@ -32,6 +32,7 @@ class MaxPooling2D(Layer):
         self.size = size
         self.stride = stride
         self._padding = padding
+        self.name = name
 
         if input_shape:
             self.build(input_shape)
