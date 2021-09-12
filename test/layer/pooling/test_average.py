@@ -174,4 +174,4 @@ def data(matrix):
 def test_max_pooling_propagate(name, batch, params, expected_output):
     layer = AveragePooling2D(*params)
     out = layer.forward_propagation(batch)
-    np.testing.assert_equal(out, expected_output)
+    np.testing.assert_array_almost_equal(out, expected_output, decimal=2)

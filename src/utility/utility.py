@@ -155,6 +155,6 @@ def pooling2D(data, stride, size, shape, type):
                             i_row : i_row + size[0],
                             i_col : i_col + size[1],
                         ]
-            pooled2D[i_row_pool][i_col_pool] = type == 'max' and sliced.max() or round(sliced.mean(), 2)
+            pooled2D[i_row_pool][i_col_pool] = type == 'max' and sliced.max() or sliced.mean()
     
     return pooled2D
