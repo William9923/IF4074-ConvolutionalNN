@@ -11,6 +11,9 @@ class Conv2D(Layer):
         This class will use convolution as computation for forward propagation.
         NeuronConv2D will be used as neuron in this Layer
 
+        Trainables params:
+            n_filters * (row_kernel * col_kernel * input_channels + 1)
+
     [Attributes]
         input (Array(batch, row, columns, channel))
         output (Array(neuron, batch, row, columns, channel))

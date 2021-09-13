@@ -35,11 +35,32 @@ def data():
     return batch
 
 
+def college_data():
+    c1 = np.array([[16, 24, 32], [47, 18, 26], [68, 12, 9]])
+    c2 = np.array([[26, 57, 43], [24, 21, 12], [2, 11, 19]])
+    c3 = np.array([[18, 47, 21], [4, 6, 12], [81, 22, 13]])
+    data = np.stack([c1, c2, c3], axis=-1)
+    return np.array([data])
+
+
 def kernel():
     return np.array(
         [
             np.array([1, 3]),
             np.array([0, -1]),
+        ]
+    )
+
+
+def kernel_college():
+    return np.array(
+        [
+            [[0, -1], [1, 0]],
+            [[5, 4], [3, 2]],
+            [[16, 24], [68, -2]],
+            [[60, 22], [32, 18]],
+            [[35, 46], [7, 23]],
+            [[78, 81], [20, 42]],
         ]
     )
 
@@ -50,7 +71,7 @@ def kernel():
         (
             "Test 1 - Forward 10 neurons",
             data(),
-            (10, (2, 2), (1, 1), (0,0,0,0), (4, 5, 3)),
+            (10, (2, 2), (1, 1), (0, 0, 0, 0), (4, 5, 3)),
             np.array(
                 [
                     np.stack(
@@ -76,8 +97,41 @@ def test_forward_layer_conv2d(name, batch, params, expected_output):
     layer = Conv2D(*params)
     channels = layer.input_shape[2]
     for neuron in layer._neurons:
-        neuron._kernels = np.array([kernel() for _ in range(channels)])
-        neuron._bias = np.ones(neuron._output_shape)
+        neuron._kernels = np.stack([kernel() for _ in range(channels)], axis=-1)
+        neuron._bias = 1
     out = layer.forward_propagation(batch)
+
+    assert (out == expected_output).all(), f"Wrong {out.shape} {expected_output.shape}"
+
+
+def test_with_college_data():
+    layer = Conv2D(2, (2, 2), (1, 1), input_shape=(3, 3, 3))
+    kernel = kernel_college()
+    layer._neurons[0]._kernels[:, :, 0] = kernel[0]
+    layer._neurons[0]._kernels[:, :, 1] = kernel[1]
+    layer._neurons[0]._kernels[:, :, 2] = kernel[2]
+
+    layer._neurons[1]._kernels[:, :, 0] = kernel[3]
+    layer._neurons[1]._kernels[:, :, 1] = kernel[4]
+    layer._neurons[1]._kernels[:, :, 2] = kernel[5]
+
+    layer._neurons[0]._bias = 0
+    layer._neurons[1]._bias = 0
+
+    out = layer.forward_propagation(college_data())
+    expected_output = np.array(
+        [
+            np.stack(
+                [
+                    [
+                        [2171.0, 2170.0],
+                        [5954.0, 2064.0],
+                    ],
+                    [[13042.0, 13575.0], [11023.0, 6425.0]],
+                ],
+                axis=-1,
+            )
+        ]
+    )
 
     assert (out == expected_output).all(), f"Wrong {out.shape} {expected_output.shape}"
