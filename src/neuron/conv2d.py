@@ -15,7 +15,7 @@ class NeuronConv2D:
         _input_shape (Tuple(row, col, channels))
         _output_shape (Tuple(row, col, channels))
         _kernels (Array(row, col, channels)) -> Shape based on kernel_shape
-        _bias (Array(row, col, channels)) -> Shape based on output shape
+        _bias (Float) -> Value bias for every kernel is same
 
     [Method]
         build
@@ -59,7 +59,7 @@ class NeuronConv2D:
         self._kernels = np.array(
             [np.random.rand(*self._kernel_shape) for _ in range(channels)]
         )
-        self._bias = np.random.rand(*self._output_shape)
+        self._bias = np.random.uniform()
 
     def compute(self, batch):
         """
@@ -79,11 +79,11 @@ class NeuronConv2D:
         for x in batch:  # x (Array(row, col, channel))
             convoluted = []
 
-            for matrix, kernel, bias in zip(
-                np.rollaxis(x, 2), self._kernels, np.rollaxis(self._bias, 2)
+            for matrix, kernel in zip(
+                np.rollaxis(x, 2), self._kernels
             ):  # matrix (Array(row, col))
                 calc = convolve2D(matrix, kernel, self._stride)
-                calc += bias
+                calc += self._bias
                 convoluted.append(calc)
 
             convoluted = np.stack(

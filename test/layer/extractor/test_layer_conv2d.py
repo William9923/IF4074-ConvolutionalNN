@@ -77,7 +77,7 @@ def test_forward_layer_conv2d(name, batch, params, expected_output):
     channels = layer.input_shape[2]
     for neuron in layer._neurons:
         neuron._kernels = np.array([kernel() for _ in range(channels)])
-        neuron._bias = np.ones(neuron._output_shape)
+        neuron._bias = 1
     out = layer.forward_propagation(batch)
 
     assert (out == expected_output).all(), f"Wrong {out.shape} {expected_output.shape}"
