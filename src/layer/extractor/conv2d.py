@@ -12,7 +12,7 @@ class Conv2D(Layer):
         NeuronConv2D will be used as neuron in this Layer
 
         Trainables params:
-            n_filters * (row_kernel * col_kernel * input_channels + 1
+            n_filters * (row_kernel * col_kernel * input_channels + 1)
 
     [Attributes]
         input (Array(batch, row, columns, channel))
