@@ -56,8 +56,8 @@ class NeuronConv2D:
             )
 
         channels = self._input_shape[2]
-        self._kernels = np.array(
-            [np.random.rand(*self._kernel_shape) for _ in range(channels)]
+        self._kernels = np.stack(
+            [np.random.rand(*self._kernel_shape) for _ in range(channels)], axis=-1
         )
         self._bias = np.random.uniform()
 
@@ -80,7 +80,7 @@ class NeuronConv2D:
             convoluted = []
 
             for matrix, kernel in zip(
-                np.rollaxis(x, 2), self._kernels
+                np.rollaxis(x, 2), np.rollaxis(self._kernels, 2)
             ):  # matrix (Array(row, col))
                 calc = convolve2D(matrix, kernel, self._stride)
                 calc += self._bias

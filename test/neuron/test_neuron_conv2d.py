@@ -75,7 +75,7 @@ def kernel():
 def test_neuron_conv2d(name, batch, params, expected_output):
     neuron = NeuronConv2D(*params)
     channels = neuron._input_shape[2]
-    neuron._kernels = np.array([kernel() for _ in range(channels)])
+    neuron._kernels = np.stack([kernel() for _ in range(channels)], axis=-1)
     neuron._bias = 1
     out = neuron.compute(batch)
     assert (out == expected_output).all(), f'Wrong Output'
