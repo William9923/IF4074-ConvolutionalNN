@@ -7,5 +7,5 @@ from src.utility.utility import (
     pooling2D,
     split_batch,
     calc_params,
-    denseComputation,
+    dense_computation,
 )

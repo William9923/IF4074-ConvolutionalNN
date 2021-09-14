@@ -211,7 +211,7 @@ def calc_params(filterLength, filterWidth, filterDepth=1, totalFilter=1):
     return totalFilter * ((filterLength * filterWidth * filterDepth) + 1)
 
 
-def denseComputation(data, weight):
+def dense_computation(data, weight):
     """
     [Flow-Function]
         1. Transpose weight matrix

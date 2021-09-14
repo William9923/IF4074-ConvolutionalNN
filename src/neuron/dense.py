@@ -1,5 +1,5 @@
 import numpy as np
-from src.utility import denseComputation
+from src.utility import dense_computation
 
 
 class NeuronDense:
@@ -66,7 +66,7 @@ class NeuronDense:
         out = []
         for data in batch:  # data (Array(m, 1))
             product = [1]  # bias for output
-            computation = denseComputation(data, self.weight)
+            computation = dense_computation(data, self.weight)
 
             product.extend(computation)
             out.append(product)
