@@ -23,4 +23,3 @@ class Softmax(Detector):
         for i in batch:
             batch_output.append(Activation.softmax(i))
         return np.array(batch_output)
-

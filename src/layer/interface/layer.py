@@ -17,8 +17,8 @@ class Layer:
     def __init__(self):
         self.input = None
         self.output = None
-        self.input_shape = None 
-        self.output_shape = None 
+        self.input_shape = None
+        self.output_shape = None
 
     def forward_propagation(self):
         pass

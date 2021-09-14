@@ -14,5 +14,3 @@ class Sigmoid(Detector):
 
     def __init__(self, name="Sigmoid"):
         super().__init__(Activation.sigmoid, name)
-
-    

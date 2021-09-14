@@ -29,7 +29,6 @@ class Flatten(Layer):
         super().__init__()
         self.name = name
 
-
     def build(self, input_shape):
         """
         Build Layers based on previous layer output (input shape)

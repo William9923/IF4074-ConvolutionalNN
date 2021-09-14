@@ -4,7 +4,7 @@ from src.utility import (
     pooling2D,
     pad2D,
     calc_convoluted_shape,
-    calc_input_shape_with_padding
+    calc_input_shape_with_padding,
 )
 
 
@@ -21,7 +21,9 @@ class AveragePooling2D(Layer):
         - Implementing backward propagation
     """
 
-    def __init__(self, size, stride, padding=(0, 0, 0, 0), input_shape=None, name='avg_pooling'):
+    def __init__(
+        self, size, stride, padding=(0, 0, 0, 0), input_shape=None, name="avg_pooling"
+    ):
         """
         [Params]
             size (Tuple(row, col)) -> Size of the filter (output shape)
@@ -52,7 +54,6 @@ class AveragePooling2D(Layer):
             self.input_shape, self.size, self.stride
         )
         self.total_params = 0
-
 
     def padding(self, batch):
         """

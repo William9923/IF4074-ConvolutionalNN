@@ -62,7 +62,7 @@ def calc_convoluted_shape(input_shape, kernel_shape, stride):
     convoluted_shape = (
         ((n_row - n_kernel_row) // n_stride_row) + 1,
         ((n_col - n_kernel_col) // n_stride_col) + 1,
-        n_channel
+        n_channel,
     )
     return convoluted_shape
 
@@ -127,6 +127,7 @@ def normalize_result(pred):
     """
     return np.argmax(pred, axis=1)
 
+
 def pooling2D(data, stride, size, shape, type):
     """
     [Flow-Function]
@@ -142,7 +143,7 @@ def pooling2D(data, stride, size, shape, type):
         size (Tuple(row, col)) -> Size of the filter
         shape(Tuple(row, col, depth)) -> Size of convoluted shape
         type(String)    -> Type of the pooling
-        
+
     [Return]
         pooled2D (Array(row, col))
     """
@@ -152,12 +153,15 @@ def pooling2D(data, stride, size, shape, type):
     for i_row_pool, i_row in enumerate(range(0, n_row - size[0] + 1, stride[0])):
         for i_col_pool, i_col in enumerate(range(0, n_col - size[1] + 1, stride[1])):
             sliced = data[
-                            i_row : i_row + size[0],
-                            i_col : i_col + size[1],
-                        ]
-            pooled2D[i_row_pool][i_col_pool] = type == 'max' and sliced.max() or sliced.mean()
-    
+                i_row : i_row + size[0],
+                i_col : i_col + size[1],
+            ]
+            pooled2D[i_row_pool][i_col_pool] = (
+                type == "max" and sliced.max() or sliced.mean()
+            )
+
     return pooled2D
+
 
 def split_batch(data, labels, batch_size):
     """
@@ -190,7 +194,8 @@ def split_batch(data, labels, batch_size):
     array = np.array(batches, dtype=object)
     return array
 
-def calc_params(filterLength, filterWidth, filterDepth = 1, totalFilter = 1 ):
+
+def calc_params(filterLength, filterWidth, filterDepth=1, totalFilter=1):
     """
     [Flow-Function]
         1. Calculate total params
@@ -205,3 +210,28 @@ def calc_params(filterLength, filterWidth, filterDepth = 1, totalFilter = 1 ):
     """
     return totalFilter * ((filterLength * filterWidth * filterDepth) + 1)
 
+
+def denseComputation(data, weight):
+    """
+    [Flow-Function]
+        1. Transpose weight matrix
+        2. Calculate the dot product of data and transposed weight matrix
+        3. Return the product
+
+    [Params]
+        data (Array(m, 1)) -> The (input data + bias) matrix with the size of m x 1 (m,)
+        weight (Array(m, k)) -> The (weight + bias) matrix with the size of m x k (m, k)
+
+    [Return]
+        output (Array(k, 1)) -> The output matrix with the size of k x 1 (k,)
+
+    [Example]
+        data = np.array([1, 0.5, 0.7, 0.0345, 0.665])
+        weight = np.array([[1, 1, 1], [0.6, 0.432, 0.912], [0.324, 0.006, 0.323], [0.167, 0.452, 0.168], [0.867, 0.671, 0.288]])
+
+        output = np.array([2.1091165 1.682009  1.879416])
+    """
+    transposed_weight = np.transpose(weight)
+
+    result = transposed_weight @ data
+    return result

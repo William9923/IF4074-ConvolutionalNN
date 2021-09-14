@@ -1,7 +1,7 @@
 class NeuronDense:
     """
     [Description]
-        This call will be used in Dense Layer as Neuron. 
+        This call will be used in Dense Layer as Neuron.
         This class contains dot product computation
 
     [Attributes]
