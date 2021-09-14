@@ -12,11 +12,23 @@ class Flatten(Layer):
     [Representation]:
     (batch, row, column, channel) -> Flatten -> (batch, row)
 
+    [Attributes]
+        input (Array(batch, row, columns, channel))
+        output (Array(batch, row))
+        input_shape Tuple(row, col, channel)
+        output_shape Tuple(row * col * channel)
+        name (str)
+
     [Method]
         build
         forward_propagation
         backward_propagation
     """
+
+    def __init__(self, name="flatten"):
+        super().__init__()
+        self.name = name
+
 
     def build(self, input_shape):
         """
