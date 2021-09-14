@@ -158,3 +158,50 @@ def pooling2D(data, stride, size, shape, type):
             pooled2D[i_row_pool][i_col_pool] = type == 'max' and sliced.max() or sliced.mean()
     
     return pooled2D
+
+def split_batch(data, labels, batch_size):
+    """
+    [Flow-Function]
+        1. Count total data in a batch
+        2. Split data into batches
+        3. Return array of tuple (x, y)
+
+    [Params]
+        data (Array(batch, row, col, channel))   -> Train data
+        labels (Array(row, col)) -> Labels for train data
+        batch_size (Integer) -> batch size
+
+    [Return]
+        array (Array(batches, batch, row, col, channels ))
+    """
+    batches = []
+    n_data = data.shape[0]
+    n_batch = n_data // batch_size
+
+    for i in range(batch_size):
+        start = n_batch * i
+        if i == batch_size - 1:
+            mini_batch = (data[start:], labels[start:])
+        else:
+            end = start + n_batch
+            mini_batch = (data[start:end], labels[start:end])
+        batches.append(mini_batch)
+
+    array = np.array(batches, dtype=object)
+    return array
+
+def calc_params(filterLength, filterWidth, filterDepth = 1, totalFilter = 1 ):
+    """
+    [Flow-Function]
+        1. Calculate total params
+    [Params]
+        filterLength (Integer) -> Length of filter
+        filterWidth (Integer) -> Width of filter
+        filterDepth (Integer) -> Depth of filter
+        totalFilter (Integer) -> Total of filter
+
+    [Return]
+        output (Integer)
+    """
+    return totalFilter * ((filterLength * filterWidth * filterDepth) + 1)
+

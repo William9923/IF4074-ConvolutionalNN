@@ -4,5 +4,7 @@ from src.utility.utility import (
     normalize_result,
     calc_input_shape_with_padding,
     calc_convoluted_shape,
-    pooling2D
+    pooling2D,
+    split_batch,
+    calc_params
 )
