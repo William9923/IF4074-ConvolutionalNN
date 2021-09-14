@@ -81,9 +81,10 @@ class Conv2D(Layer):
             input_shape (Tuple(row, col, channels)) -> Input shape for every neuron. Based on output in previous layer
         """
         self.input_shape = calc_input_shape_with_padding(input_shape, self._padding)
-        self.output_shape = calc_convoluted_shape(
+        row, col, _ = calc_convoluted_shape(
             self.input_shape, self._kernel_shape, self._stride
         )
+        self.output_shape = (row, col, self._filters)
         self._neurons = np.array(
             [
                 NeuronConv2D(

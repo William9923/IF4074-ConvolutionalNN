@@ -14,18 +14,16 @@ class Sequential:
     [Method]
 
     TODO:
-        - Create add layer method
-        - Create summary method
-        - Create predict method
         - Create convolution computation (fit)
     """
 
-    def __init__(self, name='sequential'):
+    def __init__(self, name="sequential"):
         """
         [Params]
             name (String) -> model name
         """
         self.name = name
+        self.is_built = False
         self.layers = []
 
     def add(self, layer):
@@ -37,6 +35,20 @@ class Sequential:
             layer (Layer)
         """
         self.layers.append(layer)
+
+    def build(self, input_shape):
+        """
+        [Flow-Method]
+            Build every layer from first layer with input shape
+
+        [Params]
+            input_shape (Tuple(row, col, channels)) -> Input shape image
+        """
+        self.is_built = True
+        cur_input = input_shape
+        for layer in self.layers:
+            layer.build(cur_input)
+            cur_input = layer.output_shape
 
     def compile(self, loss: Callable, metrics: Callable):
         """
@@ -63,6 +75,8 @@ class Sequential:
         [Return]
             out (Array(batch, row, columns, channels))
         """
+        if not self.is_built:
+            raise Exception("You need to build first")
         if len(self.layers) == 0:
             raise Exception("No Layer")
 
@@ -71,7 +85,6 @@ class Sequential:
             out = layer.propagate(out)
         return out
 
-
     def summary(self):
         """
         [Flow-Method]
@@ -79,22 +92,31 @@ class Sequential:
 
         """
         params = 0
-        print('Model: ' +str(self.name))
-        print('----------------------------------------------------------------------')
-        print('Layer (type)                     Output Shape                Param #')
-        print('======================================================================')
+        print("Model: " + str(self.name))
+        print("----------------------------------------------------------------------")
+        print("Layer (type)                     Output Shape                Param #")
+        print("======================================================================")
         for idx, val in enumerate(self.layers):
-            print("%-32s %-27s %-25s\n" % ((str(val.name) + '(' + str(val.__class__.__name__) + ')'), val.output_shape, val.total_params))
+            print(
+                "%-32s %-27s %-25s\n"
+                % (
+                    (str(val.name) + "(" + str(val.__class__.__name__) + ")"),
+                    val.output_shape,
+                    val.total_params,
+                )
+            )
             params += val.total_params
             if idx != (len(self.layers) - 1):
-                print('----------------------------------------------------------------------')
-        print('======================================================================')
-        print('Total params: {}'.format(params))
-        print('Trainable params: {}'.format(params))
-        print('Non-trainable params: {}'.format(params))
+                print(
+                    "----------------------------------------------------------------------"
+                )
+        print("======================================================================")
+        print("Total params: {}".format(params))
+        print("Trainable params: {}".format(params))
 
-    def fit(self,
-        x_train, 
+    def fit(
+        self,
+        x_train,
         y_train,
         batch_size,
         learning_rate,
@@ -103,8 +125,6 @@ class Sequential:
         verbose,
     ):
         pass
-    
+
     def predict(self, x):
         return self.forward_propagation(x)
-
-
