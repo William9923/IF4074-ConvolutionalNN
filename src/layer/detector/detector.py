@@ -4,7 +4,7 @@ from src.layer.interface import Layer
 class Detector(Layer):
     """
     [Description]
-        This class will use Sigmoid as activation for output from previous layer
+        This class will use activation function to the output from previous layer
 
     [Representation]:
         (batch, row, column, channel) -> Conv2D -> Detector Layer (activation func) -> (batch, row, column, channel)
@@ -36,7 +36,8 @@ class Detector(Layer):
         Build Layers based on previous layer output (input shape)
 
         [Params]
-            input_shape Tuple(row, column, channel) -> Input shape for the Activation layer. (row x columns x channel)
+            input_shape Tuple(row, column, channel) -> Input shape for the Activation layer. (row x columns x channel) | for Conv2D
+            input_shape Tuple(row) -> Input shape for the Activation layer. (row) | for Dense
         """
         self.input_shape = self.output_shape = input_shape
 
