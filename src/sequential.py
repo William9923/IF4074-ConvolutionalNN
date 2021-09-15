@@ -112,7 +112,6 @@ class Sequential:
                 )
         print("======================================================================")
         print("Total params: {}".format(params))
-        print("Trainable params: {}".format(params))
 
     def fit(
         self,
