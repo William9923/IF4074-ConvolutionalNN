@@ -4,8 +4,7 @@ from src.utility import (
     pooling2D,
     pad2D,
     calc_convoluted_shape,
-    calc_input_shape_with_padding,
-    calc_params
+    calc_input_shape_with_padding
 )
 
 
@@ -35,8 +34,6 @@ class MaxPooling2D(Layer):
         self._padding = padding
         self.name = name
 
-        self.total_params = calc_params(self.size[0], self.size[1])
-
         if input_shape:
             self.build(input_shape)
 
@@ -55,7 +52,7 @@ class MaxPooling2D(Layer):
         self.output_shape = calc_convoluted_shape(
             self.input_shape, self.size, self.stride
         )
-        self.total_params = calc_params(self.size[0], self.size[1])
+        self.total_params = 0
 
     def padding(self, batch):
         """
