@@ -23,6 +23,33 @@ from src.activation import Activation
             np.array([1.0, -1.0, 2.0, -4.0]),
             np.array([1.0, 0.0, 2.0, 0.0]),
         ),
+        (
+            "Test 4 - Sequence of sequence",
+            np.array(
+                [
+                    [
+                        [2171, 2170],
+                        [5954, 2064],
+                    ],
+                    [
+                        [13042, 13575],
+                        [11023, 6425],
+                    ],
+                ]
+            ),
+            np.array(
+                [
+                    [
+                        [2171, 2170],
+                        [5954, 2064],
+                    ],
+                    [
+                        [13042, 13575],
+                        [11023, 6425],
+                    ],
+                ]
+            ),
+        ),
     ],
 )
 def test_Activation_ReLU(name, input, expected_output):

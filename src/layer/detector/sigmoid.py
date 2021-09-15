@@ -1,20 +1,18 @@
-from src.layer.interface import Layer
+import numpy as np
+
 from src.activation import Activation
+from src.layer.detector.detector import Detector
 
 
-class Sigmoid(Layer):
+class Sigmoid(Detector):
     """
     [Description]
-        This class will use Sigmoid as activation for output from previous layer
-
-    [Attributes]
-
-    [Method]
-
-    TODO:
-        - Implementing forward propagation
-        - Implementing backward propagation
+        Perform ReLU function as activation for output from previous layer
+        - Used after the Conv Layer as detection phase in CNN.
+        - Used after the Dense Layer as activation func in Dense.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name="Sigmoid"):
+        super().__init__(Activation.sigmoid, name)
+
+    
