@@ -20,10 +20,10 @@ def data2():
 @pytest.mark.parametrize(
     "name, params, batch, expected_output_shape",
     [
-        ("Test 1 - 1 batch 1 unit", (1, (3, 1)), data1(), (1, 1)),
-        ("Test 2 - 1 batch 2 unit", (2, (3, 1)), data1(), (1, 2)),
-        ("Test 3 - 3 batch 1 unit", (1, (3, 1)), data2(), (3, 1)),
-        ("Test 4 - 3 batch 3 unit", (3, (3, 1)), data2(), (3, 3)),
+        ("Test 1 - 1 batch 1 unit", (1, 3), data1(), (1, 1)),
+        ("Test 2 - 1 batch 2 unit", (2, 3), data1(), (1, 2)),
+        ("Test 3 - 3 batch 1 unit", (1, 3), data2(), (3, 1)),
+        ("Test 4 - 3 batch 3 unit", (3, 3), data2(), (3, 3)),
     ],
 )
 def test_dense_layer(name, params, batch, expected_output_shape):
