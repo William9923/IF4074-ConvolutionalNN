@@ -21,7 +21,7 @@ class NeuronDense:
     def __init__(self, input_shape):
         """
         [Params]
-            input_shape (Tuple(row, col)) -> Shape for the input matrix (excluding bias) where col = 1 and row >= 1
+            input_shape (int) -> Row count of the input matrix (excluding bias) (column count will always be 1)
         """
         self.build(input_shape)
 
@@ -34,10 +34,10 @@ class NeuronDense:
             2. Create weight matrix by randomization with the shape of (input_row,)
             3. Assign weight matrix to weight attribute
         """
-        self._input_shape = input_shape
+        self._input_shape = (input_shape, 1)
 
-        self._weight_shape = calculate_dense_neuron_weight_shape(input_shape)
         # Calculate weight shape
+        self._weight_shape = calculate_dense_neuron_weight_shape(self._input_shape)
 
         self._weight_bias = np.random.rand(
             1,

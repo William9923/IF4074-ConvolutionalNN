@@ -31,6 +31,7 @@ class Dense(Layer):
         """
         [Params]
             unit (int)  -> The amount of units (neurons) in the layer
+            input_shape (int)  ->  Row count of the input matrix (excluding bias) (column count will always be 1)
         """
         super().__init__()
         self.unit = unit
@@ -42,12 +43,10 @@ class Dense(Layer):
             Build the layer according to the parameters
 
         [Params]
-            input_shape (Tuple(row, col))  ->  The shape of the weight matrix (excluding bias) where col = 1, row >= 1
+            input_shape (int)  ->  Row count of the input matrix (excluding bias) (column count will always be 1)
         """
-        self.input_shape = input_shape
-        self._neurons = np.array(
-            [NeuronDense(self.input_shape) for _ in range(self.unit)]
-        )
+        self.input_shape = (input_shape, 1)
+        self._neurons = np.array([NeuronDense(input_shape) for _ in range(self.unit)])
 
         # create weight matrix in the layer according to weight and bias from each neuron
         weight_matrix = []
