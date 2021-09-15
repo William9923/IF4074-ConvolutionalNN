@@ -6,5 +6,7 @@ from src.utility.utility import (
     calc_convoluted_shape,
     pooling2D,
     split_batch,
-    calc_params
+    calc_params,
+    dense_computation,
+    calculate_dense_neuron_weight_shape,
 )

@@ -33,13 +33,13 @@ matrix3 = np.array(
 
 matrix4 = np.array(
     [
-        np.array([1, 2, 3, 2, 3, 4 , 2 , 3 , 4 , 1]),
-        np.array([8, 3, 7, 4, 9, 4 , 2 , 3 , 4 , 1]),
-        np.array([9, 1, 4, 7, 2, 10, 3 , 10, 30, 3]),
-        np.array([2, 6, 5, 3, 9, 1 , 4 , 6 , 1 , 3]),
-        np.array([8, 3, 7, 4, 9, 3 , 23, 11, 23, 33]),
-        np.array([9, 1, 4, 7, 2, 12, 2 , 3 , 4 , 5]),
-        np.array([2, 6, 5, 3, 9, 10, 1 , 1 , 1 , 1]),
+        np.array([1, 2, 3, 2, 3, 4, 2, 3, 4, 1]),
+        np.array([8, 3, 7, 4, 9, 4, 2, 3, 4, 1]),
+        np.array([9, 1, 4, 7, 2, 10, 3, 10, 30, 3]),
+        np.array([2, 6, 5, 3, 9, 1, 4, 6, 1, 3]),
+        np.array([8, 3, 7, 4, 9, 3, 23, 11, 23, 33]),
+        np.array([9, 1, 4, 7, 2, 12, 2, 3, 4, 5]),
+        np.array([2, 6, 5, 3, 9, 10, 1, 1, 1, 1]),
     ]
 )
 
@@ -95,7 +95,7 @@ def data(matrix):
                             )
                             for _ in range(3)
                         ],
-                        axis=-1
+                        axis=-1,
                     )
                     for _ in range(4)
                 ]
@@ -117,7 +117,7 @@ def data(matrix):
                             )
                             for _ in range(3)
                         ],
-                        axis=-1
+                        axis=-1,
                     )
                     for _ in range(4)
                 ]
@@ -140,7 +140,7 @@ def data(matrix):
                             )
                             for _ in range(3)
                         ],
-                        axis=-1
+                        axis=-1,
                     )
                     for _ in range(4)
                 ]
@@ -163,7 +163,7 @@ def data(matrix):
                             )
                             for _ in range(3)
                         ],
-                        axis=-1
+                        axis=-1,
                     )
                     for _ in range(4)
                 ]
