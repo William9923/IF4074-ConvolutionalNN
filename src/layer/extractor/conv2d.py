@@ -2,7 +2,12 @@ import numpy as np
 
 from src.layer.interface import Layer
 from src.neuron import NeuronConv2D
-from src.utility import pad2D, calc_convoluted_shape, calc_input_shape_with_padding
+from src.utility import (
+    pad2D,
+    calc_convoluted_shape,
+    calc_input_shape_with_padding,
+    calc_params,
+)
 
 
 class Conv2D(Layer):
@@ -40,7 +45,13 @@ class Conv2D(Layer):
     """
 
     def __init__(
-        self, filters, kernel_shape, stride, padding=(0, 0, 0, 0), input_shape=None
+        self,
+        filters,
+        kernel_shape,
+        stride,
+        padding=(0, 0, 0, 0),
+        input_shape=None,
+        name="Conv2D",
     ):
         """
         [Params]
@@ -51,6 +62,7 @@ class Conv2D(Layer):
             padding (Tuple(top, bot, left, right))  -> Padding dataset before computed
         """
         super().__init__()
+        self.name = name
         self._filters = filters
         self._kernel_shape = kernel_shape
         self._stride = stride
@@ -72,9 +84,10 @@ class Conv2D(Layer):
             input_shape (Tuple(row, col, channels)) -> Input shape for every neuron. Based on output in previous layer
         """
         self.input_shape = calc_input_shape_with_padding(input_shape, self._padding)
-        self.output_shape = calc_convoluted_shape(
+        row, col, _ = calc_convoluted_shape(
             self.input_shape, self._kernel_shape, self._stride
         )
+        self.output_shape = (row, col, self._filters)
         self._neurons = np.array(
             [
                 NeuronConv2D(
@@ -85,6 +98,12 @@ class Conv2D(Layer):
                 )
                 for _ in range(self._filters)
             ]
+        )
+        self.total_params = calc_params(
+            self._kernel_shape[0],
+            self._kernel_shape[1],
+            self.input_shape[2],
+            self._filters,
         )
 
     def padding(self, batch):

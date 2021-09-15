@@ -4,7 +4,7 @@ from src.utility import (
     pooling2D,
     pad2D,
     calc_convoluted_shape,
-    calc_input_shape_with_padding,
+    calc_input_shape_with_padding
 )
 
 
@@ -49,8 +49,10 @@ class AveragePooling2D(Layer):
         """
         self.input_shape = calc_input_shape_with_padding(input_shape, self._padding)
         self.output_shape = calc_convoluted_shape(
-            self.input_shape, self.size, self._stride
+            self.input_shape, self.size, self.stride
         )
+        self.total_params = 0
+
 
     def padding(self, batch):
         """
