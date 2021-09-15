@@ -8,4 +8,5 @@ from src.utility.utility import (
     split_batch,
     calc_params,
     dense_computation,
+    calculate_dense_neuron_weight_shape,
 )

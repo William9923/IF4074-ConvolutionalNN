@@ -211,6 +211,18 @@ def calc_params(filterLength, filterWidth, filterDepth=1, totalFilter=1):
     return totalFilter * ((filterLength * filterWidth * filterDepth) + 1)
 
 
+def calculate_dense_neuron_weight_shape(input_shape):
+    """
+    [Description]
+        The weight shape of a neuron is exactly the same as the input shape
+    [Params]
+        input_shape (Tuple(m, 1))       -> The shape of the input (excluding bias)
+    [Return]
+        weight_shape (Tuple(m, 1))      -> The shape of the weight (excluding bias)
+    """
+    return input_shape
+
+
 def dense_computation(data, weight):
     """
     [Flow-Function]
@@ -224,12 +236,6 @@ def dense_computation(data, weight):
 
     [Return]
         output (Array(k, 1)) -> The output matrix with the size of k x 1 (k,)
-
-    [Example]
-        data = np.array([1, 0.5, 0.7, 0.0345, 0.665])
-        weight = np.array([[1, 1, 1], [0.6, 0.432, 0.912], [0.324, 0.006, 0.323], [0.167, 0.452, 0.168], [0.867, 0.671, 0.288]])
-
-        output = np.array([2.1091165 1.682009  1.879416])
     """
     transposed_weight = np.transpose(weight)
 

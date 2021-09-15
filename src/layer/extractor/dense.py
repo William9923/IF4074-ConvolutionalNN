@@ -1,6 +1,7 @@
 import numpy as np
 from src.layer.interface import Layer
 from src.neuron import NeuronDense
+from src.utility import dense_computation
 
 
 class Dense(Layer):
@@ -10,8 +11,13 @@ class Dense(Layer):
         NeuronDense will be used as neuron in this Layer
 
     [Attributes]
-        unit (int)                          -> The amount of units (neurons) in the layer
-        weight_shape (Tuple(row, col))      -> Shape of the weight matrix excluding bias
+        unit (int)                              -> The amount of units (neurons) in the layer
+        input_shape (Tuple(row, 1))             -> Shape of the input matrix excluding bias
+        output_shape (Tuple(weight_col, 1))     -> Shape of the output matrix
+        input (Array(batch, row, 1))            -> Input data (including bias)
+        output (Array(batch, weight_col, 1))    -> Weight data (including bias)
+        _neurons (Array(NeuronDense))           -> The array of neurons in the layer
+        accumulated_weight (Array(weight_row, weight_col))    -> The weight matrix including bias
 
     [Method]
         build
@@ -21,26 +27,40 @@ class Dense(Layer):
         - Implementing backward propagation
     """
 
-    def __init__(self, unit):
+    def __init__(self, unit, input_shape):
         """
         [Params]
             unit (int)  -> The amount of units (neurons) in the layer
         """
         super().__init__()
         self.unit = unit
+        self.build(input_shape)
 
-    def build(self, weight_shape):
+    def build(self, input_shape):
         """
         [Description]
             Build the layer according to the parameters
 
         [Params]
-            weight_shape (Tuple(row, col))  ->  The shape of the weight matrix (excluding bias) where col, row >= 1
+            input_shape (Tuple(row, col))  ->  The shape of the weight matrix (excluding bias) where col = 1, row >= 1
         """
-        self.weight_shape = weight_shape
+        self.input_shape = input_shape
         self._neurons = np.array(
-            [NeuronDense(self.weight_shape) for _ in range(self.unit)]
+            [NeuronDense(self.input_shape) for _ in range(self.unit)]
         )
+
+        # create weight matrix in the layer according to weight and bias from each neuron
+        weight_matrix = []
+        for neuron in self._neurons:
+            weight_and_bias = np.concatenate((neuron._weight_bias, neuron.weight))
+            weight_matrix.append(weight_and_bias)
+
+        weight_matrix = np.array(weight_matrix)
+        weight_matrix = np.stack(weight_matrix, axis=-1)
+        self.accumulated_weight = weight_matrix
+
+        _, col = weight_matrix.shape
+        self.output_shape = (col, 1)
 
     def forward_propagation(self, batch):
         """
@@ -57,7 +77,7 @@ class Dense(Layer):
             output (Array(batch, row, col))
         """
         self.input = batch
-        output = [neuron.compute(self.input) for neuron in self._neurons]
+        output = [dense_computation(data, self.accumulated_weight) for data in batch]
 
         output = np.array(output)
         self.output = output
