@@ -27,6 +27,7 @@ if __name__ == "__main__":
 
     encoder = OneHotEncoder()
 
+    # Only take 500 samples data, because it's too long to train 60 k data
     x = x[:500]
     labels = labels[:500]
 
