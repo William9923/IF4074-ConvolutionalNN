@@ -127,3 +127,5 @@ class Sequential:
 
     def predict(self, batch):
         return self.forward_propagation(batch)
+
+

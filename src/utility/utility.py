@@ -163,7 +163,7 @@ def pooling2D(data, stride, size, shape, type):
     return pooled2D
 
 
-def split_batch(data, labels, batch_size):
+def split_batch(data, batch_size):
     """
     [Flow-Function]
         1. Count total data in a batch
@@ -185,10 +185,10 @@ def split_batch(data, labels, batch_size):
     for i in range(batch_size):
         start = n_batch * i
         if i == batch_size - 1:
-            mini_batch = (data[start:], labels[start:])
+            mini_batch = data[start:]
         else:
             end = start + n_batch
-            mini_batch = (data[start:end], labels[start:end])
+            mini_batch = data[start:end]
         batches.append(mini_batch)
 
     array = np.array(batches, dtype=object)
@@ -216,7 +216,7 @@ def calc_params_dense(input_shape, unit):
     """
     [Flow-Function]
         1. Calculate with input_shape * unit + unit (for bias)
-    
+
     [Params]
         input_shape (int) -> input shape for dense layer
         unit (int) -> num of unit in dense layer

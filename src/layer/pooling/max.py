@@ -54,7 +54,7 @@ class MaxPooling2D(Layer):
         self.output_shape = calc_convoluted_shape(
             self.input_shape, self.size, self.stride
         )
-        self.total_params = 0
+        self.params = 0
 
     def padding(self, batch):
         """
