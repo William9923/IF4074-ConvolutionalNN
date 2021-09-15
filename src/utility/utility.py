@@ -102,10 +102,10 @@ def convolve2D(data, kernel, stride=(1, 1)):
 
 def normalize_result(pred):
     """
-        [Flow-Function]
-            1. Get all index from each highest value of the sequence
-            ps: Assumption for this function, index <=> class (for classification label)
-            (representation)
+    [Flow-Function]
+        1. Get all index from each highest value of the sequence
+        ps: Assumption for this function, index <=> class (for classification label)
+        (representation)
     (Class)    0     1     2
             ╔═════╦═════╦═════╗
             ║ 0.2 ║ 0.3 ║ 0.5 ║ → 2
@@ -195,10 +195,11 @@ def split_batch(data, labels, batch_size):
     return array
 
 
-def calc_params(filterLength, filterWidth, filterDepth=1, totalFilter=1):
+def calc_params_conv(filterLength, filterWidth, filterDepth=1, totalFilter=1):
     """
     [Flow-Function]
         1. Calculate total params
+
     [Params]
         filterLength (Integer) -> Length of filter
         filterWidth (Integer) -> Width of filter
@@ -211,33 +212,16 @@ def calc_params(filterLength, filterWidth, filterDepth=1, totalFilter=1):
     return totalFilter * ((filterLength * filterWidth * filterDepth) + 1)
 
 
-def calculate_dense_neuron_weight_shape(input_shape):
-    """
-    [Description]
-        The weight shape of a neuron is exactly the same as the input shape
-    [Params]
-        input_shape (Tuple(m, 1))       -> The shape of the input (excluding bias)
-    [Return]
-        weight_shape (Tuple(m, 1))      -> The shape of the weight (excluding bias)
-    """
-    return input_shape
-
-
-def dense_computation(data, weight):
+def calc_params_dense(input_shape, unit):
     """
     [Flow-Function]
-        1. Transpose weight matrix
-        2. Calculate the dot product of data and transposed weight matrix
-        3. Return the product
-
+        1. Calculate with input_shape * unit + unit (for bias)
+    
     [Params]
-        data (Array(m, 1)) -> The (input data + bias) matrix with the size of m x 1 (m,)
-        weight (Array(m, k)) -> The (weight + bias) matrix with the size of m x k (m, k)
+        input_shape (int) -> input shape for dense layer
+        unit (int) -> num of unit in dense layer
 
     [Return]
-        output (Array(k, 1)) -> The output matrix with the size of k x 1 (k,)
+        output (int)
     """
-    transposed_weight = np.transpose(weight)
-
-    result = transposed_weight @ data
-    return result
+    return (input_shape * unit) + unit

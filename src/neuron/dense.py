@@ -1,5 +1,4 @@
 import numpy as np
-from src.utility import calculate_dense_neuron_weight_shape
 
 
 class NeuronDense:
@@ -34,15 +33,25 @@ class NeuronDense:
             2. Create weight matrix by randomization with the shape of (input_row,)
             3. Assign weight matrix to weight attribute
         """
-        self._input_shape = (input_shape, 1)
-
-        # Calculate weight shape
-        self._weight_shape = calculate_dense_neuron_weight_shape(self._input_shape)
-
-        self._weight_bias = np.random.rand(
-            1,
+        self._input_shape = input_shape
+        self._bias = np.random.uniform()
+        self._weights = np.random.rand(
+            self._input_shape,
         )
 
-        self.weight = np.random.rand(
-            self._weight_shape[0],
-        )
+    def compute(self, batch):
+        """
+        [Flow-Method]
+            1. Loop through all batches
+            2. Sum (weights times input) + bias
+        
+        [Params]
+            batch (Array(batch, data))
+
+        [Return]
+            out (Array(batch, output_data))
+        """
+        out = []
+        for x in batch:     # x (Array(data))
+            out.append(np.sum(self._weights * x) + self._bias)
+        return np.array(out)

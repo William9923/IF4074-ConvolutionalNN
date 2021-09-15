@@ -40,6 +40,7 @@ class Detector(Layer):
             input_shape Tuple(row) -> Input shape for the Activation layer. (row) | for Dense
         """
         self.input_shape = self.output_shape = input_shape
+        self.params = 0
 
     def forward_propagation(self, batch):
         """
