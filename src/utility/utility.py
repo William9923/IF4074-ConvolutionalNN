@@ -1,5 +1,5 @@
 import numpy as np
-
+import timeit
 
 def calc_input_shape_with_padding(input_shape, padding):
     """
@@ -90,14 +90,26 @@ def convolve2D(data, kernel, stride=(1, 1)):
     convoluted_shape = calc_convoluted_shape(adapter, kernel.shape, stride)
     convoluted_shape = (convoluted_shape[0], convoluted_shape[1])
 
-    convoluted = np.ones(convoluted_shape)
-    for i_row, row in enumerate(range(0, n_row - n_kernel_row + 1, n_stride_row)):
-        for i_col, col in enumerate(range(0, n_col - n_kernel_col + 1, n_stride_col)):
-            sliced_mat = data[row : row + n_kernel_row, col : col + n_kernel_col]
-            mult_two_mat = kernel * sliced_mat
-            convoluted[i_row][i_col] = np.sum(mult_two_mat)
+    vectorized = []
+    kernel1d = kernel.reshape(-1,)
 
-    return convoluted
+    # TODO: Create this vectorized matrix faster without loop
+    start = timeit.default_timer()
+    for row in range(0, n_row - n_kernel_row + 1, n_stride_row):
+        for col in range(0, n_col - n_kernel_col + 1, n_stride_col):
+            sliced_mat = data[row : row + n_kernel_row, col : col + n_kernel_col]
+            vectorized.append(sliced_mat.reshape(-1,))
+    vectorized = np.stack(vectorized, axis=0)
+
+    # print(f"Create Vector Time: {timeit.default_timer() - start:4}")
+
+    start = timeit.default_timer()
+    temp = vectorized * kernel1d
+    summed = np.sum(temp, axis=-1)
+    summed = summed.reshape(convoluted_shape)
+    # print(f"Multiplication Time: {timeit.default_timer() - start:.4f}")
+    # print()
+    return summed
 
 
 def normalize_result(pred):
