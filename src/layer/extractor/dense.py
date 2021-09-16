@@ -12,13 +12,13 @@ class Dense(Layer):
         NeuronDense will be used as neuron in this Layer
 
     [Attributes]
-        unit (int)                              -> The amount of units (neurons) in the layer
-        input_shape (Tuple(row, 1))             -> Shape of the input matrix excluding bias
-        output_shape (Tuple(weight_col, 1))     -> Shape of the output matrix
-        input (Array(batch, row, 1))            -> Input data (including bias)
-        output (Array(batch, weight_col, 1))    -> Weight data (including bias)
-        _neurons (Array(NeuronDense))           -> The array of neurons in the layer
-        accumulated_weight (Array(weight_row, weight_col))    -> The weight matrix including bias
+        name (str)                                  -> Name layer
+        unit (int)                                  -> The amount of units (neurons) in the layer
+        input_shape (int)                           -> Shape of the input
+        output_shape (Tuple(batch, output_data))    -> Shape of the output layer
+        input (Array(batch, input_data))            -> Input data
+        output (Array(batch, output_data))          -> Output data
+        _neurons (Array(NeuronDense))               -> The array of neurons in the layer
 
     [Method]
         build
@@ -32,7 +32,7 @@ class Dense(Layer):
         """
         [Params]
             unit (int)  -> The amount of units (neurons) in the layer
-            input_shape (int)  ->  Row count of the input matrix (excluding bias) (column count will always be 1)
+            input_shape (int)  ->  Row count of the input matrix (excluding bias)
         """
         super().__init__()
         self.name = name

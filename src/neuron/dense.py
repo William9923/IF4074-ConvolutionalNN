@@ -32,9 +32,9 @@ class NeuronDense:
             input_shape (int) -> Feature count of the input
 
         [Flow-Method]
-            1. Create bias array with the shape of (1,) (basically a random value inside an array)
-            2. Create weight matrix by randomization with the shape of (input_row,)
-            3. Assign weight matrix to weight attribute
+            1. Create bias float
+            2. Create weight Array by randomization with the shape of (input_row,)
+            3. Assign weight Array to weight attribute
         """
         self._input_shape = input_shape
         self._bias = np.random.uniform()
