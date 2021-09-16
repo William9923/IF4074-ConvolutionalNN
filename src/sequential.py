@@ -1,7 +1,5 @@
 from typing import Callable
 
-from src.utility import split_batch
-
 
 class Sequential:
     """
@@ -10,9 +8,20 @@ class Sequential:
         It consists of many Layer such as Dense, Conv2D, MaxPooling2D, ReLU, etc.
 
     [Attributes]
+        name (String)
+        is_built (Boolean)
+        layers (Array(Layer))
+        loss (Callable)
+        metrics (Callable)
 
     [Method]
-
+        add
+        build
+        compile
+        forward_propagation
+        summary
+        fit
+        predict
     TODO:
         - Create convolution computation (fit)
     """
