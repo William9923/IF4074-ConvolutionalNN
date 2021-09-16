@@ -98,8 +98,8 @@ def convolve2D(data, kernel, stride=(1, 1)):
     """
     [Flow-Function]
         1. Calculate output shape
-        2. Create matrix ones for output later
-        3. Use double for loop for convolution
+        2. Create strided matrix with numpy
+        3. Use vectorized matrix multiplication to get convoluted matrix
 
     [Params]
         data (Array(row, col))   -> Matrix data as input
@@ -177,18 +177,26 @@ def pooling2D(data, stride, size, shape, type):
     [Return]
         pooled2D (Array(row, col))
     """
-    n_row, n_col = data.shape
-    pooled2D = np.ones(shape[:2])
+    cols = size[0] * size[1]
+    strided_matrix = generate_strided_matrix2d(data, size, stride).reshape(-1, cols)
+    if type == 'max': 
+        pooled2D = np.max(strided_matrix, axis=-1)
+    else: 
+        pooled2D = np.mean(strided_matrix, axis=-1)
+    pooled2D = pooled2D.reshape(shape[:2])
 
-    for i_row_pool, i_row in enumerate(range(0, n_row - size[0] + 1, stride[0])):
-        for i_col_pool, i_col in enumerate(range(0, n_col - size[1] + 1, stride[1])):
-            sliced = data[
-                i_row : i_row + size[0],
-                i_col : i_col + size[1],
-            ]
-            pooled2D[i_row_pool][i_col_pool] = (
-                type == "max" and sliced.max() or sliced.mean()
-            )
+    # n_row, n_col = data.shape
+    # pooled2D = np.ones(shape[:2])
+
+    # for i_row_pool, i_row in enumerate(range(0, n_row - size[0] + 1, stride[0])):
+    #     for i_col_pool, i_col in enumerate(range(0, n_col - size[1] + 1, stride[1])):
+    #         sliced = data[
+    #             i_row : i_row + size[0],
+    #             i_col : i_col + size[1],
+    #         ]
+    #         pooled2D[i_row_pool][i_col_pool] = (
+    #             type == "max" and sliced.max() or sliced.mean()
+    #         )
 
     return pooled2D
 
