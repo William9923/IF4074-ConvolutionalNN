@@ -184,20 +184,6 @@ def pooling2D(data, stride, size, shape, type):
     else: 
         pooled2D = np.mean(strided_matrix, axis=-1)
     pooled2D = pooled2D.reshape(shape[:2])
-
-    # n_row, n_col = data.shape
-    # pooled2D = np.ones(shape[:2])
-
-    # for i_row_pool, i_row in enumerate(range(0, n_row - size[0] + 1, stride[0])):
-    #     for i_col_pool, i_col in enumerate(range(0, n_col - size[1] + 1, stride[1])):
-    #         sliced = data[
-    #             i_row : i_row + size[0],
-    #             i_col : i_col + size[1],
-    #         ]
-    #         pooled2D[i_row_pool][i_col_pool] = (
-    #             type == "max" and sliced.max() or sliced.mean()
-    #         )
-
     return pooled2D
 
 

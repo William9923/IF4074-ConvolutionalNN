@@ -45,8 +45,8 @@ class NeuronDense:
     def compute(self, batch):
         """
         [Flow-Method]
-            1. Loop through all batches
-            2. Sum (weights times input) + bias
+            1. Sum (weights times batch) + bias
+            2. Cast to float for softmax function
 
         [Params]
             batch (Array(batch, data))
@@ -54,7 +54,5 @@ class NeuronDense:
         [Return]
             out (Array(batch, output_data))
         """
-        out = []
-        for x in batch:  # x (Array(data))
-            out.append(np.sum(self._weights * x) + self._bias)
-        return np.array(out)
+        out = (np.sum(self._weights * batch, axis=1) + self._bias).astype(float)
+        return out
