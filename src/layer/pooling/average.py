@@ -14,9 +14,21 @@ class AveragePooling2D(Layer):
         This class will get average from window pooling for forward propagation
 
     [Attributes]
+        size (Tuple(row,col))
+        stride (Tuple(row,col))
+        name (String)
+        input (Array(batch, row, columns, channel))
+        output (Array(batch, row, columns, channel))
+        input_shape (Tuple(row, col, channel))
+        output_shape (Tuple(row, col, channel))
+        total_params (Integer)
+        _padding (Tuple(top, bot, left, right))
 
     [Method]
-
+        build
+        padding
+        forward_propagation
+        
     TODO:
         - Implementing backward propagation
     """
@@ -28,6 +40,9 @@ class AveragePooling2D(Layer):
         [Params]
             size (Tuple(row, col)) -> Size of the filter (output shape)
             stride (Tuple(row, col)) -> Stride movement for convolution computation
+            padding (Tuple(top, bot, left, right))  -> Padding dataset before computed
+            input_shape (Tuple(row, col, channel)) -> Input shape for every neuron. Based on num filter in previous layer
+            name (String) -> Name of the layer
         """
         super().__init__()
         self.size = size
@@ -111,4 +126,5 @@ class AveragePooling2D(Layer):
             out.append(pooled2D)
 
         out = np.array(out)  # out (Array(batch, row, col, channel))
+        self.output = out
         return out
