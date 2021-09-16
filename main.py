@@ -27,9 +27,9 @@ if __name__ == "__main__":
 
     encoder = OneHotEncoder()
 
-    # Only take 500 samples data, because it's too long to train 60 k data
-    x = x[:500]
-    labels = labels[:500]
+    # Change when it's too long to train 60 k data (around 4 minutes)
+    # x = x[:500]
+    # labels = labels[:500]
 
     x = x.reshape(-1, col, row, 1) * 1.0 / 255
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     model.summary()
 
     # For convenience loading bar, we split the data first and use tqdm
-    split_data = split_batch(x, 10)
+    split_data = split_batch(x, 1000)
     outs = []
     norms = []
     for splitted in tqdm(split_data):
@@ -57,11 +57,12 @@ if __name__ == "__main__":
         norm_res = normalize_result(out)
         norms.append(norm_res)
         outs.append(out)
+    print()
 
     outs = np.concatenate(outs)
     norms = np.concatenate(norms)
     score = Metrics.accuracy(norms, labels)
-    print(f'Train Accuracy: {score}')
+    print(f"Train Accuracy: {score}")
 
     # Sample Output
     n_sample = 5

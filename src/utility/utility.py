@@ -1,6 +1,7 @@
 import numpy as np
 import timeit
 
+
 def calc_input_shape_with_padding(input_shape, padding):
     """
     [Flow-Function]
@@ -67,6 +68,32 @@ def calc_convoluted_shape(input_shape, kernel_shape, stride):
     return convoluted_shape
 
 
+def generate_strided_matrix2d(matrix, kernel_shape, stride):
+    """
+    [Flow-Function]
+        1. Get num of row and columns after convoluted
+        2. Using as_strided function on numpy to generate strided matrix
+
+    [Params]
+        matrix (Array(row, col)) -> Base matrix for sub matrix
+        kernel_shape (Tuple(row, col)) -> kernel used
+        stride (Tuple(row, col)) -> stride used
+
+    [Return]
+        output (Array(sub_matrix, row, col))
+    """
+    matrix_shape = matrix.shape
+    adapter = (matrix_shape[0], matrix_shape[1], 1)
+    num_row, num_col, _ = calc_convoluted_shape(adapter, kernel_shape, stride)
+
+    stride_row, stride_col = matrix.strides
+    shapes = (num_row, num_col, kernel_shape[0], kernel_shape[1])
+    strides = (stride_row * stride[0], stride_col * stride[1], stride_row, stride_col)
+    sub_matrices = np.lib.stride_tricks.as_strided(matrix, shapes, strides)
+
+    return sub_matrices.reshape(-1, kernel_shape[0], kernel_shape[1])
+
+
 def convolve2D(data, kernel, stride=(1, 1)):
     """
     [Flow-Function]
@@ -84,31 +111,22 @@ def convolve2D(data, kernel, stride=(1, 1)):
     """
     n_row, n_col = data.shape
     n_kernel_row, n_kernel_col = kernel.shape
-    n_stride_row, n_stride_col = stride
 
     adapter = (n_row, n_col, 1)
     convoluted_shape = calc_convoluted_shape(adapter, kernel.shape, stride)
     convoluted_shape = (convoluted_shape[0], convoluted_shape[1])
 
-    vectorized = []
-    kernel1d = kernel.reshape(-1,)
+    kernel1d = kernel.reshape(
+        -1,
+    )
 
-    # TODO: Create this vectorized matrix faster without loop
-    start = timeit.default_timer()
-    for row in range(0, n_row - n_kernel_row + 1, n_stride_row):
-        for col in range(0, n_col - n_kernel_col + 1, n_stride_col):
-            sliced_mat = data[row : row + n_kernel_row, col : col + n_kernel_col]
-            vectorized.append(sliced_mat.reshape(-1,))
-    vectorized = np.stack(vectorized, axis=0)
+    strided_matrix = generate_strided_matrix2d(data, kernel.shape, stride)
+    vectorized_col = n_kernel_row * n_kernel_col
+    vectorized = strided_matrix.reshape(-1, vectorized_col)
 
-    # print(f"Create Vector Time: {timeit.default_timer() - start:4}")
-
-    start = timeit.default_timer()
     temp = vectorized * kernel1d
     summed = np.sum(temp, axis=-1)
     summed = summed.reshape(convoluted_shape)
-    # print(f"Multiplication Time: {timeit.default_timer() - start:.4f}")
-    # print()
     return summed
 
 

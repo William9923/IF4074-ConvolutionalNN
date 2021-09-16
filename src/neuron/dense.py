@@ -8,25 +8,28 @@ class NeuronDense:
         This class contains dot product computation
 
     [Attributes]
-        _input_shape (Tuple(m, n))          -> The shape of the input w
-        _weight_shape (Tuple(row, col))
-        _weight_bias (Array(k, 1))          -> Bias for the weight. The shape is k x 1 (k,) where k is the column count of weight matrix
-        weight (Array(row, col))
+        _input_shape (int)  -> The shape of the input
+        _bias (float)       -> Bias for the weight
+        weights (Array(row, col))
 
     [Method]
         build
+        compute
     """
 
     def __init__(self, input_shape):
         """
         [Params]
-            input_shape (int) -> Row count of the input matrix (excluding bias) (column count will always be 1)
+            input_shape (int) -> Feature count of the input
         """
         self.build(input_shape)
 
     def build(self, input_shape):
         """
         Build weight matrix based on weight_shape value
+
+        [Params]
+            input_shape (int) -> Feature count of the input
 
         [Flow-Method]
             1. Create bias array with the shape of (1,) (basically a random value inside an array)
@@ -44,7 +47,7 @@ class NeuronDense:
         [Flow-Method]
             1. Loop through all batches
             2. Sum (weights times input) + bias
-        
+
         [Params]
             batch (Array(batch, data))
 
@@ -52,6 +55,6 @@ class NeuronDense:
             out (Array(batch, output_data))
         """
         out = []
-        for x in batch:     # x (Array(data))
+        for x in batch:  # x (Array(data))
             out.append(np.sum(self._weights * x) + self._bias)
         return np.array(out)

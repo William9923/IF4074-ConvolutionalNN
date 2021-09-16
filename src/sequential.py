@@ -1,6 +1,7 @@
 from typing import Callable
 
 from src.utility import split_batch
+import timeit
 
 
 class Sequential:
@@ -127,5 +128,3 @@ class Sequential:
 
     def predict(self, batch):
         return self.forward_propagation(batch)
-
-
