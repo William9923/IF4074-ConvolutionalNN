@@ -1,5 +1,8 @@
 from typing import Callable
 
+from src.utility import split_batch
+import timeit
+
 
 class Sequential:
     """
@@ -71,7 +74,7 @@ class Sequential:
         self.loss = loss
         self.metrics = metrics
 
-    def forward_propagation(self, data):
+    def forward_propagation(self, batch):
         """
         [Flow-Method]
             1. Iterate through self.layers
@@ -89,9 +92,9 @@ class Sequential:
         if len(self.layers) == 0:
             raise Exception("No Layer")
 
-        out = self.layers[0].propagate(data)
+        out = self.layers[0].forward_propagation(batch)
         for layer in self.layers[1:]:
-            out = layer.propagate(out)
+            out = layer.forward_propagation(out)
         return out
 
     def summary(self):
@@ -107,14 +110,14 @@ class Sequential:
         print("======================================================================")
         for idx, val in enumerate(self.layers):
             print(
-                "%-32s %-27s %-25s\n"
+                "%-32s %-27s %-25s"
                 % (
                     (str(val.name) + "(" + str(val.__class__.__name__) + ")"),
                     val.output_shape,
-                    val.total_params,
+                    val.params,
                 )
             )
-            params += val.total_params
+            params += val.params
             if idx != (len(self.layers) - 1):
                 print(
                     "----------------------------------------------------------------------"
@@ -134,5 +137,5 @@ class Sequential:
     ):
         pass
 
-    def predict(self, x):
-        return self.forward_propagation(x)
+    def predict(self, batch):
+        return self.forward_propagation(batch)

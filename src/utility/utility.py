@@ -1,4 +1,5 @@
 import numpy as np
+import timeit
 
 
 def calc_input_shape_with_padding(input_shape, padding):
@@ -67,12 +68,38 @@ def calc_convoluted_shape(input_shape, kernel_shape, stride):
     return convoluted_shape
 
 
+def generate_strided_matrix2d(matrix, kernel_shape, stride):
+    """
+    [Flow-Function]
+        1. Get num of row and columns after convoluted
+        2. Using as_strided function on numpy to generate strided matrix
+
+    [Params]
+        matrix (Array(row, col)) -> Base matrix for sub matrix
+        kernel_shape (Tuple(row, col)) -> kernel used
+        stride (Tuple(row, col)) -> stride used
+
+    [Return]
+        output (Array(sub_matrix, row, col))
+    """
+    matrix_shape = matrix.shape
+    adapter = (matrix_shape[0], matrix_shape[1], 1)
+    num_row, num_col, _ = calc_convoluted_shape(adapter, kernel_shape, stride)
+
+    stride_row, stride_col = matrix.strides
+    shapes = (num_row, num_col, kernel_shape[0], kernel_shape[1])
+    strides = (stride_row * stride[0], stride_col * stride[1], stride_row, stride_col)
+    sub_matrices = np.lib.stride_tricks.as_strided(matrix, shapes, strides)
+
+    return sub_matrices.reshape(-1, kernel_shape[0], kernel_shape[1])
+
+
 def convolve2D(data, kernel, stride=(1, 1)):
     """
     [Flow-Function]
         1. Calculate output shape
-        2. Create matrix ones for output later
-        3. Use double for loop for convolution
+        2. Create strided matrix with numpy
+        3. Use vectorized matrix multiplication to get convoluted matrix
 
     [Params]
         data (Array(row, col))   -> Matrix data as input
@@ -84,28 +111,31 @@ def convolve2D(data, kernel, stride=(1, 1)):
     """
     n_row, n_col = data.shape
     n_kernel_row, n_kernel_col = kernel.shape
-    n_stride_row, n_stride_col = stride
 
     adapter = (n_row, n_col, 1)
     convoluted_shape = calc_convoluted_shape(adapter, kernel.shape, stride)
     convoluted_shape = (convoluted_shape[0], convoluted_shape[1])
 
-    convoluted = np.ones(convoluted_shape)
-    for i_row, row in enumerate(range(0, n_row - n_kernel_row + 1, n_stride_row)):
-        for i_col, col in enumerate(range(0, n_col - n_kernel_col + 1, n_stride_col)):
-            sliced_mat = data[row : row + n_kernel_row, col : col + n_kernel_col]
-            mult_two_mat = kernel * sliced_mat
-            convoluted[i_row][i_col] = np.sum(mult_two_mat)
+    kernel1d = kernel.reshape(
+        -1,
+    )
 
-    return convoluted
+    strided_matrix = generate_strided_matrix2d(data, kernel.shape, stride)
+    vectorized_col = n_kernel_row * n_kernel_col
+    vectorized = strided_matrix.reshape(-1, vectorized_col)
+
+    temp = vectorized * kernel1d
+    summed = np.sum(temp, axis=-1)
+    summed = summed.reshape(convoluted_shape)
+    return summed
 
 
 def normalize_result(pred):
     """
-        [Flow-Function]
-            1. Get all index from each highest value of the sequence
-            ps: Assumption for this function, index <=> class (for classification label)
-            (representation)
+    [Flow-Function]
+        1. Get all index from each highest value of the sequence
+        ps: Assumption for this function, index <=> class (for classification label)
+        (representation)
     (Class)    0     1     2
             ╔═════╦═════╦═════╗
             ║ 0.2 ║ 0.3 ║ 0.5 ║ → 2
@@ -147,23 +177,17 @@ def pooling2D(data, stride, size, shape, type):
     [Return]
         pooled2D (Array(row, col))
     """
-    n_row, n_col = data.shape
-    pooled2D = np.ones(shape[:2])
-
-    for i_row_pool, i_row in enumerate(range(0, n_row - size[0] + 1, stride[0])):
-        for i_col_pool, i_col in enumerate(range(0, n_col - size[1] + 1, stride[1])):
-            sliced = data[
-                i_row : i_row + size[0],
-                i_col : i_col + size[1],
-            ]
-            pooled2D[i_row_pool][i_col_pool] = (
-                type == "max" and sliced.max() or sliced.mean()
-            )
-
+    cols = size[0] * size[1]
+    strided_matrix = generate_strided_matrix2d(data, size, stride).reshape(-1, cols)
+    if type == 'max': 
+        pooled2D = np.max(strided_matrix, axis=-1)
+    else: 
+        pooled2D = np.mean(strided_matrix, axis=-1)
+    pooled2D = pooled2D.reshape(shape[:2])
     return pooled2D
 
 
-def split_batch(data, labels, batch_size):
+def split_batch(data, batch_size):
     """
     [Flow-Function]
         1. Count total data in a batch
@@ -185,20 +209,21 @@ def split_batch(data, labels, batch_size):
     for i in range(batch_size):
         start = n_batch * i
         if i == batch_size - 1:
-            mini_batch = (data[start:], labels[start:])
+            mini_batch = data[start:]
         else:
             end = start + n_batch
-            mini_batch = (data[start:end], labels[start:end])
+            mini_batch = data[start:end]
         batches.append(mini_batch)
 
     array = np.array(batches, dtype=object)
     return array
 
 
-def calc_params(filterLength, filterWidth, filterDepth=1, totalFilter=1):
+def calc_params_conv(filterLength, filterWidth, filterDepth=1, totalFilter=1):
     """
     [Flow-Function]
         1. Calculate total params
+
     [Params]
         filterLength (Integer) -> Length of filter
         filterWidth (Integer) -> Width of filter
@@ -211,33 +236,16 @@ def calc_params(filterLength, filterWidth, filterDepth=1, totalFilter=1):
     return totalFilter * ((filterLength * filterWidth * filterDepth) + 1)
 
 
-def calculate_dense_neuron_weight_shape(input_shape):
-    """
-    [Description]
-        The weight shape of a neuron is exactly the same as the input shape
-    [Params]
-        input_shape (Tuple(m, 1))       -> The shape of the input (excluding bias)
-    [Return]
-        weight_shape (Tuple(m, 1))      -> The shape of the weight (excluding bias)
-    """
-    return input_shape
-
-
-def dense_computation(data, weight):
+def calc_params_dense(input_shape, unit):
     """
     [Flow-Function]
-        1. Transpose weight matrix
-        2. Calculate the dot product of data and transposed weight matrix
-        3. Return the product
+        1. Calculate with input_shape * unit + unit (for bias)
 
     [Params]
-        data (Array(m, 1)) -> The (input data + bias) matrix with the size of m x 1 (m,)
-        weight (Array(m, k)) -> The (weight + bias) matrix with the size of m x k (m, k)
+        input_shape (int) -> input shape for dense layer
+        unit (int) -> num of unit in dense layer
 
     [Return]
-        output (Array(k, 1)) -> The output matrix with the size of k x 1 (k,)
+        output (int)
     """
-    transposed_weight = np.transpose(weight)
-
-    result = transposed_weight @ data
-    return result
+    return (input_shape * unit) + unit

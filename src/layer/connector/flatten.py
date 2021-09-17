@@ -10,7 +10,7 @@ class Flatten(Layer):
         Used to connect Conv layer into Fully Connected Layer
 
     [Representation]:
-    (batch, row, column, channel) -> Flatten -> (batch, row)
+        (batch, row, column, channel) -> Flatten -> (batch, row)
 
     [Attributes]
         input (Array(batch, row, columns, channel))
@@ -39,6 +39,8 @@ class Flatten(Layer):
         row, column, channel = input_shape
         self.input_shape = (row, column, channel)
         self.output_shape = row * column * channel
+        self.params = 0
+
 
     def forward_propagation(self, batch):
         """

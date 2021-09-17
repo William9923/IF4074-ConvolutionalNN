@@ -10,17 +10,17 @@ class Detector(Layer):
         (batch, row, column, channel) -> Conv2D -> Detector Layer (activation func) -> (batch, row, column, channel)
 
     [Attributes]
-    func (func(Array(batch, row, columns, channel)) -> Array(batch, row, columns, channel))
-    input (Array(batch, row, columns, channel))
-    output (Array(batch, row))
-    input_shape Tuple(row, col, channel)
-    output_shape Tuple(row * col * channel)
-    name (str)
+        func (func(Array(batch, row, columns, channel)) -> Array(batch, row, columns, channel))
+        input (Array(batch, row, columns, channel))
+        output (Array(batch, row))
+        input_shape Tuple(row, col, channel)
+        output_shape Tuple(row * col * channel)
+        name (str)
 
     [Method]
-    build
-    forward_propagation
-    backward_propagation
+        build
+        forward_propagation
+        backward_propagation
 
     TODO:
         - Implementing backward propagation
@@ -40,6 +40,7 @@ class Detector(Layer):
             input_shape Tuple(row) -> Input shape for the Activation layer. (row) | for Dense
         """
         self.input_shape = self.output_shape = input_shape
+        self.params = 0
 
     def forward_propagation(self, batch):
         """

@@ -6,7 +6,7 @@ from src.utility import (
     pad2D,
     calc_convoluted_shape,
     calc_input_shape_with_padding,
-    calc_params,
+    calc_params_conv,
 )
 
 
@@ -87,7 +87,12 @@ class Conv2D(Layer):
         row, col, _ = calc_convoluted_shape(
             self.input_shape, self._kernel_shape, self._stride
         )
+
+        if row <= 0 or col <=0:
+            raise Exception("Convolution make negative dimension")
+
         self.output_shape = (row, col, self._filters)
+
         self._neurons = np.array(
             [
                 NeuronConv2D(
@@ -99,7 +104,7 @@ class Conv2D(Layer):
                 for _ in range(self._filters)
             ]
         )
-        self.total_params = calc_params(
+        self.params = calc_params_conv(
             self._kernel_shape[0],
             self._kernel_shape[1],
             self.input_shape[2],
