@@ -84,7 +84,7 @@ class NeuronConv2D:
             ):  # matrix (Array(row, col))
                 calc = convolve2D(matrix, kernel, self._stride)
                 calc += self._bias
-                convoluted.append(calc)
+                convoluted.append(calc.astype(float))
 
             convoluted = np.stack(
                 convoluted, axis=-1

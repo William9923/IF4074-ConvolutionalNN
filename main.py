@@ -36,8 +36,8 @@ if __name__ == "__main__":
     y = encoder.fit_transform(np.array(labels).reshape(-1, 1)).toarray()
 
     model = Sequential()
-    model.add(Conv2D(4, (2, 2), (1, 1)))
-    model.add(ReLU())
+    model.add(Conv2D(4, (3, 3), (1, 1)))
+    model.add(Sigmoid())
     model.add(MaxPooling2D((2, 2), (2, 2)))
     model.add(Flatten())
     model.add(Dense(y.shape[1]))
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     model.summary()
 
     # For convenience loading bar, we split the data first and use tqdm
-    split_data = split_batch(x, 1000)
+    split_data = split_batch(x, 100)
     outs = []
     norms = []
     for splitted in tqdm(split_data):
