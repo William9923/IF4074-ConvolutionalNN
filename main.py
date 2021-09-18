@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # x = x[:500]
     # labels = labels[:500]
 
-    x = x.reshape(-1, col, row, 1) * 1.0 / 255
+    x = x.reshape(-1, row, col, 1) * 1.0 / 255
 
     y = encoder.fit_transform(np.array(labels).reshape(-1, 1)).toarray()
 
