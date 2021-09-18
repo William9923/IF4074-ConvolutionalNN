@@ -20,6 +20,8 @@ class Conv2D(Layer):
             n_filters * (row_kernel * col_kernel * input_channels + 1)
 
     [Attributes]
+        name (str)
+        params (int)
         input (Array(batch, row, columns, channel))
         output (Array(neuron, batch, row, columns, channel))
         input_shape Tuple(row, col, channel)
@@ -60,6 +62,7 @@ class Conv2D(Layer):
             stride (Tuple(row, col))                -> Stride movement for convolution computation
             input_shape (Tuple(row, col, channels)) -> Input shape for every neuron. Based on num filter in previous layer
             padding (Tuple(top, bot, left, right))  -> Padding dataset before computed
+            name (str)                              -> Layer name
         """
         super().__init__()
         self.name = name
