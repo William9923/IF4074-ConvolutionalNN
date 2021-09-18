@@ -10,7 +10,7 @@ class NeuronConv2D:
         This class contains convolution computation
 
     [Attributes]
-        _stride (Tuple(row, col))
+        _strides (Tuple(row, col))
         _kernel_shape (Tuple(row, col))
         _input_shape (Tuple(row, col, channels))
         _output_shape (Tuple(row, col, channels))
@@ -28,8 +28,6 @@ class NeuronConv2D:
             kernel_shape (Tuple(row, col))          -> Shape kernel for this neuron
             stride (Tuple(row, col))                -> Stride movement for convolution computation
             input_shape (Tuple(row, col, channels)) -> Input shape is num filter or channels layer before
-            output_shape (Tuple(row, col, channels))-> Output shape is shape after computation, calculated with stride, 
-                                                       kernel shape, and input shape
         """
         self._stride = stride
         self._kernel_shape = kernel_shape
