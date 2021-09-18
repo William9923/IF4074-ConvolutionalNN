@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     encoder = OneHotEncoder()
 
-    # Change when it's too long to train 60 k data (around 4 minutes)
+    # Change when it's too long to train 60 k data (around 2 minutes)
     # x = x[:500]
     # labels = labels[:500]
 
