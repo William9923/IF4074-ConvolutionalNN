@@ -13,7 +13,6 @@ class NeuronConv2D:
         _strides (Tuple(row, col))
         _kernel_shape (Tuple(row, col))
         _input_shape (Tuple(row, col, channels))
-        _output_shape (Tuple(row, col, channels))
         _kernels (Array(row, col, channels)) -> Shape based on kernel_shape
         _bias (Float) -> Value bias for every kernel is same
 
@@ -22,7 +21,7 @@ class NeuronConv2D:
         compute
     """
 
-    def __init__(self, kernel_shape, stride, input_shape=None, output_shape=None):
+    def __init__(self, kernel_shape, stride, input_shape=None):
         """
         [Params]
             kernel_shape (Tuple(row, col))          -> Shape kernel for this neuron
@@ -31,7 +30,6 @@ class NeuronConv2D:
         """
         self._stride = stride
         self._kernel_shape = kernel_shape
-        self._output_shape = output_shape
         if input_shape:
             self.build(input_shape)
 
@@ -41,20 +39,13 @@ class NeuronConv2D:
 
         [Flow-Method]
             1. Save input_shape as variable
-            2. If output shaped is not provided, it will calculate output shape itself
-            3. Use channels shape to create kernels
-            4. Use output shape to create bias
+            2. Use channels shape to create kernels
+            3. Use output shape to create bias
 
         [Params]
             input_shape (Tuple(row, col, channels)) -> Input shape is output from previous layer
         """
         self._input_shape = input_shape
-
-        if not self._output_shape:
-            self._output_shape = calc_convoluted_shape(
-                input_shape, self._kernel_shape, self._stride
-            )
-
         channels = self._input_shape[2]
         self._kernels = np.stack(
             [np.random.rand(*self._kernel_shape) for _ in range(channels)], axis=-1
@@ -73,7 +64,7 @@ class NeuronConv2D:
             batch (Array(batch, row, col, channel))
 
         [Return]
-            out (Array(batch, row, col, channel))
+            out (Array(batch, row, col))
         """
         out = []
         for x in batch:  # x (Array(row, col, channel))
@@ -83,7 +74,6 @@ class NeuronConv2D:
                 np.rollaxis(x, 2), np.rollaxis(self._kernels, 2)
             ):  # matrix (Array(row, col))
                 calc = convolve2D(matrix, kernel, self._stride)
-                calc += self._bias
                 convoluted.append(calc.astype(float))
 
             convoluted = np.stack(
@@ -91,5 +81,7 @@ class NeuronConv2D:
             )  # convoluted (Array(row, col, channel))
             out.append(convoluted)
 
-        out = np.array(out)  # out (Array(batch, row, col, channel))
+        out = np.array(out)  
+        out = np.sum(out, axis=-1) # out (Array(batch, row, col))
+        out += self._bias
         return out

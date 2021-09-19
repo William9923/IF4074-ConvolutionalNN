@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+from numpy.testing import assert_array_almost_equal
 
 from src.neuron import NeuronConv2D
 
@@ -53,18 +54,12 @@ def kernel():
             ((2, 2), (1, 1), (4, 5, 3)),
             np.array(
                 [
-                    np.stack(
+                    np.array(
                         [
-                            np.array(
-                                [
-                                    np.array([5.0, 5.0, 6.0, 3.0]),
-                                    np.array([17.0, 21.0, 13.0, 30.0]),
-                                    np.array([7.0, 9.0, 23.0, 5.0]),
-                                ]
-                            )
-                            for _ in range(3)
-                        ],
-                        axis=-1,
+                            [13.0, 13.0, 16.0, 7.0], 
+                            [49.0, 61.0, 37.0, 88.0], 
+                            [19.0, 25.0, 67.0, 13.0]
+                        ]
                     )
                     for _ in range(4)
                 ]
@@ -78,4 +73,4 @@ def test_neuron_conv2d(name, batch, params, expected_output):
     neuron._kernels = np.stack([kernel() for _ in range(channels)], axis=-1)
     neuron._bias = 1
     out = neuron.compute(batch)
-    assert (out == expected_output).all(), f"Wrong Output"
+    assert_array_almost_equal(out, expected_output)

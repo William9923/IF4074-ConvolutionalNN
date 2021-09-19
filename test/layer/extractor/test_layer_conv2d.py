@@ -1,3 +1,4 @@
+from numpy.testing._private.utils import assert_array_almost_equal
 import pytest
 import numpy as np
 
@@ -78,9 +79,9 @@ def kernel_college():
                         [
                             np.array(
                                 [
-                                    np.array([5.0, 5.0, 6.0, 3.0]) * 3,
-                                    np.array([17.0, 21.0, 13.0, 30.0]) * 3,
-                                    np.array([7.0, 9.0, 23.0, 5.0]) * 3,
+                                    np.array([13.0, 13.0, 16.0, 7.0]),
+                                    np.array([49.0, 61.0, 37.0, 88.0]),
+                                    np.array([19.0, 25.0, 67.0, 13.0]),
                                 ]
                             )
                             for _ in range(10)
@@ -101,7 +102,7 @@ def test_forward_layer_conv2d(name, batch, params, expected_output):
         neuron._bias = 1
     out = layer.forward_propagation(batch)
 
-    assert (out == expected_output).all(), f"Wrong {out.shape} {expected_output.shape}"
+    assert_array_almost_equal(out, expected_output)
 
 
 def test_with_college_data():
@@ -133,5 +134,4 @@ def test_with_college_data():
             )
         ]
     )
-
-    assert (out == expected_output).all(), f"Wrong {out.shape} {expected_output.shape}"
+    assert_array_almost_equal(out, expected_output)

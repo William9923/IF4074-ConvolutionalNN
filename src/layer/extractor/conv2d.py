@@ -99,7 +99,6 @@ class Conv2D(Layer):
                     self._kernel_shape,
                     self._stride,
                     input_shape=self.input_shape,
-                    output_shape=self.output_shape,
                 )
                 for _ in range(self._filters)
             ]
@@ -158,5 +157,5 @@ class Conv2D(Layer):
 
         # Save output for every neuron
         self.output = np.array(output)
-        output = np.stack([np.sum(element, axis=-1) for element in output], axis=-1)
+        output = np.stack(output, axis=-1)
         return output
