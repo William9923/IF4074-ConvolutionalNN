@@ -41,7 +41,6 @@ class Flatten(Layer):
         self.output_shape = row * column * channel
         self.params = 0
 
-
     def forward_propagation(self, batch):
         """
         [Flow-Method]

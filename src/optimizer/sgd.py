@@ -10,10 +10,11 @@ class SGD:
         _learning_rate (float)
         _momentum (float)
         _velocity (float)
-    
+
     [Method]
         update
     """
+
     def __init__(self, learning_rate=1e-3, momentum=0.1):
         """
         [Params]
@@ -34,18 +35,20 @@ class SGD:
         [Params]
             weight (float)
             gradient (float)
-        
+
         [Return]
             updated_weight (float)
         """
-        self._velocity = self._momentum * self._velocity - self._learning_rate * gradient
+        self._velocity = (
+            self._momentum * self._velocity - self._learning_rate * gradient
+        )
         updated_weight = weight + self._velocity
         return updated_weight
 
     def update_matrix(self, weight, gradient):
         """
         [Notes]
-            Need further research, is summing gradient first, 
+            Need further research, is summing gradient first,
             or need one by one to update weight
 
         [Flow-Method]
@@ -59,6 +62,8 @@ class SGD:
         [Return]
             udpated_weight (Array(row, col))
         """
-        self._velocity = self._momentum * self._velocity - self._learning_rate * np.sum(gradient)
+        self._velocity = self._momentum * self._velocity - self._learning_rate * np.sum(
+            gradient
+        )
         udpated_weight = weight + self._velocity
         return udpated_weight
