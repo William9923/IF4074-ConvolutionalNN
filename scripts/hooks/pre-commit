@@ -37,7 +37,6 @@ runCommand () {
       
       if [[ $? -ne 0 ]]; then
             printError "$executedCmd"
-            check=false
       else
             printSuccess "$executedCmd"
       fi
@@ -57,7 +56,7 @@ then
       for FILE in $staged_files
             do
                   # Run black on the staged file
-                  runCommand "black " $FILE
+                  runCommand "black" $FILE
 
                   # stage that file again (just in case it's prettified)
                   git add $FILE
