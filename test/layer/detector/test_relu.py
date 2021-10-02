@@ -137,6 +137,7 @@ def test_ReLU_forward_propagation(name, input_shape, batch, expected_output):
     except AssertionError as err:
         assert False, f"{name} | {expected_output} expected, but get {output}"
 
+
 @pytest.mark.parametrize(
     "name, input_shape, batch, errors, expected_propagate_error",
     [
@@ -159,11 +160,18 @@ def test_ReLU_forward_propagation(name, input_shape, batch, expected_output):
         ),
     ],
 )
-def test_ReLU_backward_propagation(name, input_shape, batch, errors, expected_propagate_error):
+def test_ReLU_backward_propagation(
+    name, input_shape, batch, errors, expected_propagate_error
+):
     layer = ReLU()
     layer.build(input_shape)
-    
+
     layer.forward_propagation(batch)
     propagate_error = layer.backward_propagation(errors)
 
-    assert_array_almost_equal(expected_propagate_error, propagate_error, decimal=5, err_msg=f"{name} | Output shape -> Expected: {expected_propagate_error}, Got: {propagate_error}")
+    assert_array_almost_equal(
+        expected_propagate_error,
+        propagate_error,
+        decimal=5,
+        err_msg=f"{name} | Output shape -> Expected: {expected_propagate_error}, Got: {propagate_error}",
+    )

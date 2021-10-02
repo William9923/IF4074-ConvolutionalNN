@@ -78,4 +78,3 @@ class Detector(Layer):
         """
         deriv_out = self.func(self.output, deriv=True)
         return deriv_out * errors
-    

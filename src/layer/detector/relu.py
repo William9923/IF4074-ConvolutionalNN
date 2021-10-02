@@ -1,6 +1,7 @@
 from src.activation import Activation
 from src.layer.detector.detector import Detector
 
+
 class ReLU(Detector):
     """
     [Description]

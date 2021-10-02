@@ -76,4 +76,3 @@ class Activation:
         if deriv:
             return Activation.softmax(x) * (1 - Activation.softmax(x))
         return np.exp(x) / np.sum(np.exp(x), axis=0)
-
