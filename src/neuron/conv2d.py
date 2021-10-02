@@ -28,7 +28,6 @@ class NeuronConv2D:
             stride (Tuple(row, col))                -> Stride movement for convolution computation
             input_shape (Tuple(row, col, channels)) -> Input shape is num filter or channels layer before
         """
-        self._velocity = 0.0
         self._stride = stride
         self._kernel_shape = kernel_shape
         if input_shape:
@@ -91,14 +90,19 @@ class NeuronConv2D:
         self.output = out
         return out
 
-    def update_weights(self, batch_error):
+    def update_weights(self, opt, batch_error):
         """
+        [Notes]
+            1. Every error in batch_error size will be same as output shape from this neuron
+            2. dEdIns returned in this method will be same as batch x input shape
+
         [Flow-Method]
 
         [Params]
-            error (Array(batch, row, col, channel)) -> row and col based on _kernels_shape, and channel based on input_shape
+            opt (Optimizer) -> optimizer params from sequential
+            batch_error (Array(batch, row, col, channel)) -> row and col based on _kernels_shape, and channel based on input_shape
         """
-        dEdWs = dEdIns = []
+        dEdWs, dEdIns = [], []
 
         for input, error in zip(
             self.input, batch_error
@@ -117,17 +121,24 @@ class NeuronConv2D:
                 gradient_channels.append(dEdW)
                 local_error_channels.append(dEdIn)
 
-            gradient_every_channel = np.stack(gradient_every_channel, axis=-1)
-            local_error_channel = np.stack(local_error_channel, axis=-1)
-
-            dEdWs.append(gradient_every_channel)
+            gradient_channels = np.stack(gradient_channels, axis=-1)
+            local_error_channels = np.stack(local_error_channels, axis=-1)
+            dEdWs.append(gradient_channels)
             dEdIns.append(local_error_channels)
 
         dEdWs = np.array(dEdWs)  # gradients (Array(batch, row, col, channel))
         dEdIns = np.array(dEdIns)
 
         # Updating weights
-        gradients = np.sum(dEdW, axis=0)
-        self._kernels = self._kernels - 0.1 * gradients
+        # TODO: Do it faster not use loop
+        gradients = np.sum(dEdWs, axis=0)
+        n_rows, n_cols, n_channels = self._kernels.shape
+        for n_row in range(n_rows):
+            for n_col in range(n_cols):
+                for n_channel in range(n_channels):
+                    self._kernels[n_row][n_col][n_channel] = opt.update(
+                        self._kernels[n_row][n_col][n_channel],
+                        gradients[n_row][n_col][n_channel],
+                    )
 
         return dEdIns

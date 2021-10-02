@@ -173,7 +173,11 @@ class Conv2D(Layer):
         [Return]
             propagated_error (batch, neurons, row, col, channels)
         """
+        dEdIns = []
         for neuron, error in zip(self._neurons, np.rollaxis(errors, 1)): # error (Array(batch, row, col, channels))
-            neuron.update_weights(error)
-
-        pass
+            dEdIns.append(neuron.update_weights(error))
+        
+        dEdIns = np.array(dEdIns)
+        n_neuron, n_batch, n_row, n_col, n_channel = dEdIns.shape
+        dEdIns = dEdIns.reshape(n_batch, n_neuron, n_row, n_col, n_channel)
+        return dEdIns
