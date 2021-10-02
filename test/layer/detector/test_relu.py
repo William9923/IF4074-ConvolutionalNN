@@ -136,3 +136,34 @@ def test_ReLU_forward_propagation(name, input_shape, batch, expected_output):
         assert_array_almost_equal(expected_output, output, decimal=5)
     except AssertionError as err:
         assert False, f"{name} | {expected_output} expected, but get {output}"
+
+@pytest.mark.parametrize(
+    "name, input_shape, batch, errors, expected_propagate_error",
+    [
+        (
+            "Test - (None, 5) -> Dense",
+            (5),
+            np.array([[-20, -1.0, 0.0, 1.0, 20]]),
+            1,
+            np.array(
+                [
+                    [
+                        0,
+                        0,
+                        0,
+                        1,
+                        1,
+                    ]
+                ]
+            ),
+        ),
+    ],
+)
+def test_ReLU_backward_propagation(name, input_shape, batch, errors, expected_propagate_error):
+    layer = ReLU()
+    layer.build(input_shape)
+    
+    layer.forward_propagation(batch)
+    propagate_error = layer.backward_propagation(errors)
+
+    assert_array_almost_equal(expected_propagate_error, propagate_error, decimal=5, err_msg=f"{name} | Output shape -> Expected: {expected_propagate_error}, Got: {propagate_error}")

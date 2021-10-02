@@ -32,7 +32,7 @@ class Activation:
             output (float64) | Array(float64)
         """
         if deriv:
-            return np.where(x < 0, 0, 1)
+            return np.where(x <= 0, 0, 1)
         return np.maximum(0, x)
 
     @staticmethod
