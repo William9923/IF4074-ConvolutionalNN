@@ -179,9 +179,9 @@ def pooling2D(data, stride, size, shape, type):
     """
     cols = size[0] * size[1]
     strided_matrix = generate_strided_matrix2d(data, size, stride).reshape(-1, cols)
-    if type == 'max': 
+    if type == "max":
         pooled2D = np.max(strided_matrix, axis=-1)
-    else: 
+    else:
         pooled2D = np.mean(strided_matrix, axis=-1)
     pooled2D = pooled2D.reshape(shape[:2])
     return pooled2D

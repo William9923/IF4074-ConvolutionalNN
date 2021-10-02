@@ -88,7 +88,7 @@ class Conv2D(Layer):
             self.input_shape, self._kernel_shape, self._stride
         )
 
-        if row <= 0 or col <=0:
+        if row <= 0 or col <= 0:
             raise Exception("Convolution make negative dimension")
 
         self.output_shape = (row, col, self._filters)

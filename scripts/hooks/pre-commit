@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "executing pre-commit hooks checks with args [$@]"
+
+#######################
+# Linter & Formatting #
+#######################
+echo "executing formatter & linter..."
+source venv/bin/activate
+black .

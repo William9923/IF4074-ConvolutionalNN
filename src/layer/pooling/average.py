@@ -28,7 +28,7 @@ class AveragePooling2D(Layer):
         build
         padding
         forward_propagation
-        
+
     TODO:
         - Implementing backward propagation
     """
