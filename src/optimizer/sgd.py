@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class SGD:
     """
     [Description]
@@ -23,7 +26,7 @@ class SGD:
 
     def update(self, weight, gradient):
         """
-        [Flow-method]
+        [Flow-Method]
             1. Updating velocity with formula
                 velocity = momentum * velocity - learning_rate * gradient
             2. Return weight + velocity
@@ -34,3 +37,12 @@ class SGD:
         self._velocity = self._momentum * self._velocity - self._learning_rate * gradient
         updated_weight = weight + self._velocity
         return updated_weight
+
+    def update_matrix(self, weight, gradient):
+        """
+        [Flow-Method]
+            1. Updating 
+        """
+        self._velocity = self._momentum * self._velocity - self._learning_rate * np.sum(gradient)
+        udpated_weight = weight + self._velocity
+        return udpated_weight

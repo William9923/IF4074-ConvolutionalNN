@@ -19,6 +19,7 @@ class NeuronConv2D:
     [Method]
         build
         compute
+        update_weights
     """
 
     def __init__(self, kernel_shape, stride, input_shape=None):
@@ -97,6 +98,9 @@ class NeuronConv2D:
             2. dEdIns returned in this method will be same as batch x input shape
 
         [Flow-Method]
+            1. Calculate dEdW and dEdIn for every error, input, and kernel
+            2. Sum dEdW because it's batch
+            3. Update kernels weight with opt update method
 
         [Params]
             opt (Optimizer) -> optimizer params from sequential
@@ -130,15 +134,6 @@ class NeuronConv2D:
         dEdIns = np.array(dEdIns)
 
         # Updating weights
-        # TODO: Do it faster not use loop
         gradients = np.sum(dEdWs, axis=0)
-        n_rows, n_cols, n_channels = self._kernels.shape
-        for n_row in range(n_rows):
-            for n_col in range(n_cols):
-                for n_channel in range(n_channels):
-                    self._kernels[n_row][n_col][n_channel] = opt.update(
-                        self._kernels[n_row][n_col][n_channel],
-                        gradients[n_row][n_col][n_channel],
-                    )
-
+        self._kernels = opt.update_matrix(self._kernels, gradients)
         return dEdIns
