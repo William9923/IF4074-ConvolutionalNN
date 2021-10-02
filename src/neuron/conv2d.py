@@ -134,11 +134,9 @@ class NeuronConv2D:
         dEdIns = np.array(dEdIns)
 
         # Updating weights
-        print(self._kernels)
         gradients = np.sum(dEdWs, axis=0)
         for i, (kernel2d, gradient2d) in enumerate(
             zip(np.rollaxis(self._kernels, 2), np.rollaxis(gradients, 2))
         ):
             self._kernels[:, :, i] = opt.update_matrix(kernel2d, gradient2d)
-        print(self._kernels)
         return dEdIns
