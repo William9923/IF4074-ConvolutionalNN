@@ -159,3 +159,21 @@ class Conv2D(Layer):
         self.output = np.array(output)
         output = np.stack(output, axis=-1)
         return output
+
+    def backward_propagation(self, errors):
+        """
+        [Flow-Method]
+
+
+        [Params]
+            errors (batch, neurons, row, col, channels) -> row and col based on kernel_shape, 
+                channels based on input_shape, 
+                neurons based on how many filters used in this layer
+
+        [Return]
+            propagated_error (batch, neurons, row, col, channels)
+        """
+        for neuron, error in zip(self._neurons, np.rollaxis(errors, 1)): # error (Array(batch, row, col, channels))
+            neuron.update_weights(error)
+
+        pass
