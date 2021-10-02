@@ -20,6 +20,10 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
     """
     [Flow]
         1. Read Dataset MNIST
