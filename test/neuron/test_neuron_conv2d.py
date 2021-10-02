@@ -67,7 +67,7 @@ def kernel():
         )
     ],
 )
-def test_neuron_conv2d(name, batch, params, expected_output):
+def test_neuron_conv2d_compute(name, batch, params, expected_output):
     neuron = NeuronConv2D(*params)
     channels = neuron._input_shape[2]
     neuron._kernels = np.stack([kernel() for _ in range(channels)], axis=-1)
