@@ -127,3 +127,54 @@ class AveragePooling2D(Layer):
         out = np.array(out)  # out (Array(batch, row, col, channel))
         self.output = out
         return out
+
+    def backward_propagation(self, errors):
+        """
+        [Flow-Method]
+           1. Receive errors from next layer as partial derivative error
+           2. Iterate through all data (in a batch)
+                1. Create new matrix with identical shape to input (including padding) of zero
+                2. Spread the gradient error into each convoluted area from kernel
+                3. Slice through any additional padding to get the non-padded input shaped errors
+            3. Propagate errors back to previous layer
+        [Params]
+            errors (Array(batch, row, columns, channels))
+
+        [Return]
+            propagate_error (Array(batch, row, columns, channels))
+        """
+        dEdIns = []
+
+        unpooled_shapes = self.input.shape[1:]
+        feature_map_row, feature_map_col, _ = errors.shape[1:]
+        mask_row, mask_col, _ = self.size
+        unpool_row, unpool_col, _ = unpooled_shapes
+        stride = self.stride
+        top, bot, left, right = self._padding
+        mask = (
+            np.ones([mask_row, mask_col]) * 1 / (mask_row * mask_col)
+        )  # Array(row, col)
+
+        for error in errors:  # error (Array(row, col, channel))
+            unpooled2D = []
+            for err_matrix in np.rollaxis(
+                error, 2
+            ):  # matrix (Array(row, col)) -> error for that parts
+                unpooled = np.zeros([unpool_row, unpool_col])
+
+                for i in range(feature_map_row):
+                    for j in range(feature_map_col):
+                        x = i * stride
+                        y = j * stride
+                        unpooled[x : x + mask_row][y : y + mask_col] += (
+                            err_matrix[i][j] * mask
+                        )
+
+                unpooled_non_padding = unpooled[top : unpool_row - bot][
+                    left : unpool_col - right
+                ]
+                unpooled2D.append(unpooled_non_padding)
+
+            unpooled2D = np.stack(unpooled2D, axis=-1)
+            dEdIns.append(unpooled2D)
+        return np.array(dEdIns)

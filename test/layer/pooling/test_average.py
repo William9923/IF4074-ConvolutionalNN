@@ -175,3 +175,30 @@ def test_avg_pooling_propagate(name, batch, params, expected_output):
     layer = AveragePooling2D(*params)
     out = layer.forward_propagation(batch)
     np.testing.assert_array_almost_equal(out, expected_output, decimal=2)
+
+
+@pytest.mark.parametrize(
+    "name, batch, params, expected_output",
+    [
+        (
+            "Test 1 - Pool data 1",
+            data(matrix),
+            ((3, 3), (1, 1)),
+            np.ones([4, 2, 3, 3]),
+            np.array([4, 4, 5, 3]),
+        ),
+    ],
+)
+def test_avg_pooling_backprop_shape(
+    name, batch, params, errors, expected_propagate_error_shape
+):
+    layer = AveragePooling2D(*params)
+    layer.forward_propagation(batch)
+    propagate_error = layer.backward_propagation(errors)
+
+    np.testing.assert_array_almost_equal(
+        expected_propagate_error_shape,
+        propagate_error.shape,
+        decimal=5,
+        err_msg=f"{name} | Output shape -> Expected: {expected_propagate_error_shape}, Got: {propagate_error.shape}",
+    )
