@@ -134,7 +134,7 @@ class NeuronConv2D:
 
         [Params]
             opt (Optimizer) -> optimizer params from sequential
-            batch_error (Array(batch, row, col)) -> row and col based on _kernels_shape
+            batch_error (Array(batch, row, col, channel)) -> row and col based on _kernels_shape
         """
         dEdWs_batch, dEdIns_batch = [], []
         for input, matrix_error in zip(
@@ -146,10 +146,6 @@ class NeuronConv2D:
             ):  # matrix_input (Array(row, col)) matrix_kernel (Array(row, col))
                 dEdW = self._dEdW(matrix_error, matrix_input)
                 dEdIn = self._dEdIn(matrix_error, matrix_kernel)
-                # print(matrix_error.shape)
-                # print(matrix_kernel.shape)
-                # print(dEdIn.shape)
-                # print()
                 dEdWs.append(dEdW)
                 dEdIns.append(dEdIn)
 

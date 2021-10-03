@@ -164,12 +164,11 @@ class Conv2D(Layer):
     def backward_propagation(self, errors):
         """
         [Flow-Method]
-
+            1. Compute dEdIn for every neuron
+            2. Sum dEdIn for every neuron
 
         [Params]
-            errors (batch, row, col, channels) -> row and col based on kernel_shape, 
-                channels based on input_shape, 
-                neurons based on how many filters used in this layer
+            errors (batch, row, col, channels) -> row, col, channels based on output_shape, 
 
         [Return]
             propagated_error (batch, row, col, channels)
