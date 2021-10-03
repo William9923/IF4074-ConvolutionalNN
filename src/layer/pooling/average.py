@@ -147,9 +147,9 @@ class AveragePooling2D(Layer):
 
         unpooled_shapes = self.input.shape[1:]
         feature_map_row, feature_map_col, _ = errors.shape[1:]
-        mask_row, mask_col, _ = self.size
+        mask_row, mask_col = self.size
         unpool_row, unpool_col, _ = unpooled_shapes
-        stride = self.stride
+        stride_row, stride_col = self.stride
         top, bot, left, right = self._padding
         mask = (
             np.ones([mask_row, mask_col]) * 1 / (mask_row * mask_col)
@@ -162,16 +162,17 @@ class AveragePooling2D(Layer):
             ):  # matrix (Array(row, col)) -> error for that parts
                 unpooled = np.zeros([unpool_row, unpool_col])
 
+                # iterate each gradient in feature map to map into the original input using mask (distributed avg mask) * gradient (scalar)
                 for i in range(feature_map_row):
                     for j in range(feature_map_col):
-                        x = i * stride
-                        y = j * stride
-                        unpooled[x : x + mask_row][y : y + mask_col] += (
+                        x = i * stride_row
+                        y = j * stride_col
+                        unpooled[x : x + mask_row].T[y : y + mask_col] += (
                             err_matrix[i][j] * mask
                         )
 
-                unpooled_non_padding = unpooled[top : unpool_row - bot][
-                    left : unpool_col - right
+                unpooled_non_padding = unpooled[top : unpool_row - bot + 1][
+                    left : unpool_col - right + 1
                 ]
                 unpooled2D.append(unpooled_non_padding)
 

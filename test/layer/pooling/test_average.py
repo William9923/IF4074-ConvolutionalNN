@@ -178,7 +178,7 @@ def test_avg_pooling_propagate(name, batch, params, expected_output):
 
 
 @pytest.mark.parametrize(
-    "name, batch, params, expected_output",
+    "name, batch, params, errors, expected_propagate_error_shape",
     [
         (
             "Test 1 - Pool data 1",
@@ -186,6 +186,27 @@ def test_avg_pooling_propagate(name, batch, params, expected_output):
             ((3, 3), (1, 1)),
             np.ones([4, 2, 3, 3]),
             np.array([4, 4, 5, 3]),
+        ),
+        (
+            "Test 2 - Pool data 2",
+            data(matrix2),
+            ((2, 2), (1, 1)),
+            np.ones([4, 2, 4, 3]),
+            np.array([4, 3, 5, 3]),
+        ),
+        (
+            "Test 3 - Pool data 3",
+            data(matrix3),
+            ((3, 3), (2, 2)),
+            np.ones([4, 3, 2, 3]),
+            np.array([4, 7, 6, 3]),
+        ),
+        (
+            "Test 4 - Pool data 4",
+            data(matrix4),
+            ((3, 3), (2, 2)),
+            np.ones([4, 3, 4, 3]),
+            np.array([4, 7, 10, 3]),
         ),
     ],
 )
