@@ -2,16 +2,14 @@
 
 echo "executing formatter & linter..."
 
-if [ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux"]; then
+if [ "$(uname)" = "Darwin" ]; then
   source venv/bin/activate
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+elif [ "$(expr substr $(uname -s) 1 10)" = "MINGW64_NT" ]; then
   source venv/Scripts/activate
 fi
 
-$commandName=black
-CMD=$(command -v $commandName)
-if [[ ! -x "$CMD" ]]; then
-  printError "Please Install $commandName for checks"
+if ! [ -x "$(command -v black)" ]; then
+  echo 'Error: black is not installed.' >&2
   exit 1
 fi
 
