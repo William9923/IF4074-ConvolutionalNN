@@ -139,23 +139,28 @@ class MaxPooling2D(Layer):
         return out
 
     def backward_propagation(self, error):
-        derivative = np.zeros(self.input_shape[:2])
-
+        derivative = []
         for x in self.pooling_index: # x (Array(row, col, index, channel))
+            deriv2D = []
             for matrix in np.rollaxis(x, 3): # matrix (Array(row, col, index))
+                deriv = np.zeros(self.input_shape[:2]) # deriv (Array(row, col))
                 out_x, out_y = matrix.shape[:2]
                 for x2 in range(out_x):
                     for y2 in range(out_y):
                         start_x = x2 * self.stride[0]
                         start_y = y2 * self.stride[1]
 
-                        # index maks based on input matrix
+                        # index max based on input matrix
                         idx_x = start_x + matrix[x2][y2][0]
                         idx_y = start_y + matrix[x2][y2][1]
 
-                        print(str(idx_x) + ' ' + str(idx_y))
+                        deriv[idx_x][idx_y] = 1 # or matrix_input[x][y] ??
+                deriv2D.append(deriv)
+            deriv2D = np.stack(deriv2D, axis=-1) 
+            # deriv2D (Array(row, col, channels))
+            derivative.append(deriv2D) # derivative (Array(batch, row, col, channels))
 
-
+        derivative = np.array(derivative)
         return error * derivative
 
                 
