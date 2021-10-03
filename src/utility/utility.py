@@ -1,6 +1,8 @@
 import numpy as np
 import timeit
 
+from copy import deepcopy
+
 
 def calc_input_shape_with_padding(input_shape, padding):
     """
@@ -128,6 +130,64 @@ def convolve2D(data, kernel, stride=(1, 1)):
     summed = np.sum(temp, axis=-1)
     summed = summed.reshape(convoluted_shape)
     return summed
+
+def dilate(matrix, stride):
+    """
+    [Flow-Method]
+        1. Insert zeros first for rows
+        2. Handle insert zeros for columns
+
+    (matrix)
+        [[0, 1, 2],
+         [3, 4, 5],
+         [6, 7, 8]]
+        
+    (stride)
+        (2, 2)
+    
+    (return)
+        [[0, 0, 1, 0, 2],
+         [0, 0, 0, 0, 0],
+         [3, 0, 4, 0, 5],
+         [0, 0, 0, 0, 0],
+         [6, 0, 7, 0, 8]]
+
+    [Params]
+        matrix (Array(row, col))
+        stride (Tuple(row, col))
+
+    [Return]
+        result (Array(row, col))
+    """
+    stride_row, stride_col = stride
+    _, matrix_col = matrix.shape
+    
+    # Handle rows
+    if stride_row == 1:
+        result_row = matrix
+    else:
+        result_row = []
+        zeros = np.zeros(matrix_col)
+        for row in matrix:
+            result_row.append(row)
+            for _ in range(stride_row-1):
+                result_row.append(zeros)
+        result_row = np.array(result_row[:-(stride_row-1)])
+
+    # Handle cols
+    if stride_col == 1:
+        result = result_row
+    else:
+        result = []
+        matrix_row = result_row.shape[0]
+        zeros = np.zeros(matrix_row)
+        for col in np.rollaxis(result_row, 1):
+            result.append(col)
+            for _ in range(stride_col-1):
+                result.append(zeros)
+        result = np.array(result[:-(stride_col-1)]).T
+
+    return result
 
 
 def normalize_result(pred):

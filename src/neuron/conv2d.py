@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.utility import convolve2D, calc_convoluted_shape
+from src.utility import convolve2D, dilate, pad2D
 
 
 class NeuronConv2D:
@@ -19,6 +19,7 @@ class NeuronConv2D:
     [Method]
         build
         compute
+        update_weights
     """
 
     def __init__(self, kernel_shape, stride, input_shape=None):
@@ -66,6 +67,8 @@ class NeuronConv2D:
         [Return]
             out (Array(batch, row, col))
         """
+        self.input = batch
+
         out = []
         for x in batch:  # x (Array(row, col, channel))
             convoluted = []
@@ -81,7 +84,83 @@ class NeuronConv2D:
             )  # convoluted (Array(row, col, channel))
             out.append(convoluted)
 
-        out = np.array(out)
+        out = np.array(out)  # out (Array(batch, row, col, channel))
+        self.raw_output = out
         out = np.sum(out, axis=-1)  # out (Array(batch, row, col))
+        self.output_without_bias = out
         out += self._bias
+
+        self.output = out
         return out
+
+    def _dEdW(self, error, input):
+        """
+        [Params]
+            error (Array(row, col))
+            input (Array(row, col))
+        
+        [Return]
+            dEdW (Array(row, col))
+        """
+        dilated_error = dilate(error, self._stride)
+        dEdW = convolve2D(input, dilated_error)
+        return dEdW
+    
+    def _dEdIn(self, error, kernel):
+        """
+        [Params]
+            error (Array(row, col))
+            kernel (Array(row, col))
+        
+        [Return]
+            dEdIn (Array(row, col))
+        """
+        rotated_kernel = np.rot90(np.rot90(kernel))
+        dilated_error = dilate(error, self._stride)
+        padding = (self._kernel_shape[0]-1, self._kernel_shape[0]-1, self._kernel_shape[1]-1, self._kernel_shape[1]-1)
+        dEdIn = convolve2D(pad2D(dilated_error, pad=padding), rotated_kernel)
+        return dEdIn
+
+    def update_weights(self, opt, batch_error):
+        """
+        [Notes]
+            1. Every error in batch_error size will be same as output shape from this neuron
+            2. dEdIns returned in this method will be same as batch x input shape
+
+        [Flow-Method]
+            1. Calculate dEdW and dEdIn for every error, input, and kernel
+            2. Sum dEdW because it's batch
+            3. Update kernels weight with opt update method
+
+        [Params]
+            opt (Optimizer) -> optimizer params from sequential
+            batch_error (Array(batch, row, col, channel)) -> row and col based on _kernels_shape
+        """
+        dEdWs_batch, dEdIns_batch = [], []
+        for input, matrix_error in zip(
+            self.input, batch_error
+        ):  # input (Array(row, col, channel)) error (Array(row, col))
+            dEdWs, dEdIns = [], []
+            for matrix_input, matrix_kernel in zip(
+                np.rollaxis(input, 2), np.rollaxis(self._kernels, 2)
+            ):  # matrix_input (Array(row, col)) matrix_kernel (Array(row, col))
+                dEdW = self._dEdW(matrix_error, matrix_input)
+                dEdIn = self._dEdIn(matrix_error, matrix_kernel)
+                dEdWs.append(dEdW)
+                dEdIns.append(dEdIn)
+
+            dEdWs = np.stack(dEdWs, axis=-1)
+            dEdIns = np.stack(dEdIns, axis=-1)
+            dEdWs_batch.append(dEdWs)
+            dEdIns_batch.append(dEdIns)
+
+        dEdWs_batch = np.array(dEdWs_batch)  # dEdWs_batch (Array(batch, row, col, channel))
+        dEdIns_batch = np.array(dEdIns_batch)
+
+        # Updating weights
+        gradients = np.sum(dEdWs_batch, axis=0)
+        for i, (kernel2d, gradient2d) in enumerate(
+            zip(np.rollaxis(self._kernels, 2), np.rollaxis(gradients, 2))
+        ):
+            self._kernels[:, :, i] = opt.update_matrix(kernel2d, gradient2d)
+        return dEdIns_batch
