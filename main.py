@@ -10,6 +10,7 @@ from src.metrics import Metrics
 from src.utility import normalize_result, split_batch
 
 if __name__ == "__main__":
+
     """
     [Flow]
         1. Read Dataset MNIST

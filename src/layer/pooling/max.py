@@ -5,7 +5,7 @@ from src.utility import (
     pad2D,
     calc_convoluted_shape,
     calc_input_shape_with_padding,
-    generate_strided_matrix2d
+    generate_strided_matrix2d,
 )
 
 
@@ -29,7 +29,7 @@ class MaxPooling2D(Layer):
         build
         padding
         forward_propagation
-        
+
     TODO:
         - Implementing backward propagation
     """
@@ -121,7 +121,9 @@ class MaxPooling2D(Layer):
             pooled2D = []
             index2D = []
             for matrix in np.rollaxis(x, 2):  # matrix (Array(row, col))
-                pooled, index = pooling2D(matrix, self.stride, self.size, pooled_sizes, "max")
+                pooled, index = pooling2D(
+                    matrix, self.stride, self.size, pooled_sizes, "max"
+                )
                 pooled2D.append(pooled)
                 # index2D (Array(row, col, index)))
                 index2D.append(index)
@@ -134,15 +136,17 @@ class MaxPooling2D(Layer):
             pool_index.append(index2D)
 
         out = np.array(out)  # out (Array(batch, row, col, channel))
-        self.pooling_index = np.array(pool_index) # Array(batch, row, col, index, channel)
+        self.pooling_index = np.array(
+            pool_index
+        )  # Array(batch, row, col, index, channel)
         self.output = out
         return out
 
     def backward_propagation(self, error):
         derivative = np.zeros(self.input_shape[:2])
 
-        for x in self.pooling_index: # x (Array(row, col, index, channel))
-            for matrix in np.rollaxis(x, 3): # matrix (Array(row, col, index))
+        for x in self.pooling_index:  # x (Array(row, col, index, channel))
+            for matrix in np.rollaxis(x, 3):  # matrix (Array(row, col, index))
                 out_x, out_y = matrix.shape[:2]
                 for x2 in range(out_x):
                     for y2 in range(out_y):
@@ -153,12 +157,10 @@ class MaxPooling2D(Layer):
                         idx_x = start_x + matrix[x2][y2][0]
                         idx_y = start_y + matrix[x2][y2][1]
 
-                        print(str(idx_x) + ' ' + str(idx_y))
-
+                        print(str(idx_x) + " " + str(idx_y))
 
         return error * derivative
 
-                
         # for x1 in out_x:
         #     for y1 in out_y:
         #     for x2 in in_x:

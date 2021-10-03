@@ -28,9 +28,6 @@ class AveragePooling2D(Layer):
         build
         padding
         forward_propagation
-        
-    TODO:
-        - Implementing backward propagation
     """
 
     def __init__(
@@ -118,7 +115,9 @@ class AveragePooling2D(Layer):
             pooled_sizes = calc_convoluted_shape(x.shape, self.size, self.stride)
             pooled2D = []
             for matrix in np.rollaxis(x, 2):  # matrix (Array(row, col))
-                pooled = pooling2D(matrix, self.stride, self.size, pooled_sizes, "avg")
+                pooled, _ = pooling2D(
+                    matrix, self.stride, self.size, pooled_sizes, "avg"
+                )
                 pooled2D.append(pooled)
 
             pooled2D = np.stack(pooled2D, axis=-1)

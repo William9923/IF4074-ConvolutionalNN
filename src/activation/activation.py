@@ -10,9 +10,6 @@ class Activation:
         - ReLU
         - Sigmoid
         - Softmax
-
-    TODO:
-        - Create softmax derivative
     """
 
     @staticmethod
@@ -35,7 +32,7 @@ class Activation:
             output (float64) | Array(float64)
         """
         if deriv:
-            return np.where(x < 0, 0, 1)
+            return np.where(x <= 0, 0, 1)
         return np.maximum(0, x)
 
     @staticmethod
@@ -46,7 +43,7 @@ class Activation:
         [Flow-Function]
             1. Check if using derivative option
             2. If derivative, use :
-                f'(x) = x * (1 - x)
+                f'(x) = f(x) * (1 - f(x))
             3. If not (normal calculation), use :
                 f(x) = 1 / (1 + exp(-x))
 
@@ -66,7 +63,7 @@ class Activation:
         [Flow-Function]
             1. Check if using derivative option
             2. If derivative, use :
-                pass ??
+                f'(x) = f(x) * (1 - f(x)) -> f(x) : softmax function
             3. If not (normal calculation), use :
                 f(x) = exp(xi) / Σexp(x)
 
@@ -77,5 +74,5 @@ class Activation:
             output Array(float64) -> Probability of all output (sum(output) == 1.0)
         """
         if deriv:
-            pass
+            return Activation.softmax(x) * (1 - Activation.softmax(x))
         return np.exp(x) / np.sum(np.exp(x), axis=0)
