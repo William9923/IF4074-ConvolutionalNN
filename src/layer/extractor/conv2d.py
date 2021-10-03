@@ -2,6 +2,7 @@ import numpy as np
 
 from src.layer.interface import Layer
 from src.neuron import NeuronConv2D
+from src.optimizer import SGD
 from src.utility import (
     pad2D,
     calc_convoluted_shape,
@@ -156,8 +157,8 @@ class Conv2D(Layer):
         output = [neuron.compute(self.input) for neuron in self._neurons]
 
         # Save output for every neuron
-        self.output = np.array(output)
         output = np.stack(output, axis=-1)
+        self.output = np.array(output)
         return output
 
     def backward_propagation(self, errors):
@@ -166,18 +167,16 @@ class Conv2D(Layer):
 
 
         [Params]
-            errors (batch, neurons, row, col, channels) -> row and col based on kernel_shape, 
+            errors (batch, row, col, channels) -> row and col based on kernel_shape, 
                 channels based on input_shape, 
                 neurons based on how many filters used in this layer
 
         [Return]
-            propagated_error (batch, neurons, row, col, channels)
+            propagated_error (batch, row, col, channels)
         """
         dEdIns = []
-        for neuron, error in zip(self._neurons, np.rollaxis(errors, 1)): # error (Array(batch, row, col, channels))
-            dEdIns.append(neuron.update_weights(error))
+        for neuron, error in zip(self._neurons, np.rollaxis(errors, 3)): # error (Array(batch, row, col))
+            dEdIns.append(neuron.update_weights(SGD(), error))
         
-        dEdIns = np.array(dEdIns)
-        n_neuron, n_batch, n_row, n_col, n_channel = dEdIns.shape
-        dEdIns = dEdIns.reshape(n_batch, n_neuron, n_row, n_col, n_channel)
+        dEdIns = np.sum(dEdIns, axis=0)
         return dEdIns

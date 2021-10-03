@@ -190,33 +190,6 @@ def dilate(matrix, stride):
     return result
 
 
-def conv2d_derivative(error, kernel, input, stride):
-    """
-    [Flow-Method]
-        1. dEdW Formula
-        2. dEdIn Formula
-
-    [Params]
-        error (Array(row, col))
-        kernel (Array(row, col))
-        input (Array(row, col))
-        stride (Tuple(row, col))
-
-    [Return]
-        dEdW (Array(row, col))
-        dEdIn (Array(row, col))
-    """
-    rotated_kernel = np.rot90(np.rot90(kernel))
-    dilated_error = dilate(error, stride)
-    kernel_row, kernel_col = kernel.shape
-    padding = (kernel_row-1, kernel_row-1, kernel_col-1, kernel_col-1)
-
-    dEdW = convolve2D(input, dilated_error)
-    dEdIn = convolve2D(pad2D(dilated_error, pad=padding), rotated_kernel)
-
-    return dEdW, dEdIn
-
-
 def normalize_result(pred):
     """
     [Flow-Function]
