@@ -144,7 +144,16 @@ class MaxPooling2D(Layer):
         for x in self.pooling_index: # x (Array(row, col, index, channel))
             for matrix in np.rollaxis(x, 3): # matrix (Array(row, col, index))
                 out_x, out_y = matrix.shape[:2]
-                print(out_y)
+                for x2 in range(out_x):
+                    for y2 in range(out_y):
+                        start_x = x2 * self.stride[0]
+                        start_y = y2 * self.stride[1]
+
+                        # index maks based on input matrix
+                        idx_x = start_x + matrix[x2][y2][0]
+                        idx_y = start_y + matrix[x2][y2][1]
+
+                        print(str(idx_x) + ' ' + str(idx_y))
 
 
         return error * derivative
