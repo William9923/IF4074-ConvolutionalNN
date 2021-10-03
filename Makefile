@@ -3,7 +3,7 @@ test-folder=test/
 setup:
 	sh ./setup.sh
 
-tests:
+test-unit:
 	python -m pytest ${test-folder}
 
 cover:

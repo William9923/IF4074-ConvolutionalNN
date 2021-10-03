@@ -139,29 +139,52 @@ def test_ReLU_forward_propagation(name, input_shape, batch, expected_output):
 
 
 @pytest.mark.parametrize(
-    "name, input_shape, batch, errors, expected_propagate_error",
+    "name, input_shape, batch, errors, expected_propagate_error_shape",
     [
         (
             "Test - (None, 5) -> Dense",
             (5),
             np.array([[-20, -1.0, 0.0, 1.0, 20]]),
-            1,
+            np.array([[-20, -1.0, 0.0, 1.0, 20]]),
+            np.array((1, 5)),
+        ),
+        (
+            "Test - (None, 2, 2, 2) -> Conv2D",
+            (2, 2, 2),
             np.array(
                 [
                     [
-                        0,
-                        0,
-                        0,
-                        1,
-                        1,
+                        [
+                            [2171, 2170],
+                            [5954, 2064],
+                        ],
+                        [
+                            [13042, 13575],
+                            [11023, 6425],
+                        ],
                     ]
                 ]
             ),
+            np.array(
+                [
+                    [
+                        [
+                            [2171, 2170],
+                            [5954, 2064],
+                        ],
+                        [
+                            [13042, 13575],
+                            [11023, 6425],
+                        ],
+                    ]
+                ]
+            ),
+            np.array((1, 2, 2, 2)),
         ),
     ],
 )
-def test_ReLU_backward_propagation(
-    name, input_shape, batch, errors, expected_propagate_error
+def test_ReLU_backward_propagation_shape(
+    name, input_shape, batch, errors, expected_propagate_error_shape
 ):
     layer = ReLU()
     layer.build(input_shape)
@@ -170,8 +193,8 @@ def test_ReLU_backward_propagation(
     propagate_error = layer.backward_propagation(errors)
 
     assert_array_almost_equal(
-        expected_propagate_error,
-        propagate_error,
+        expected_propagate_error_shape,
+        propagate_error.shape,
         decimal=5,
-        err_msg=f"{name} | Output shape -> Expected: {expected_propagate_error}, Got: {propagate_error}",
+        err_msg=f"{name} | Output shape -> Expected: {expected_propagate_error_shape}, Got: {propagate_error.shape}",
     )
