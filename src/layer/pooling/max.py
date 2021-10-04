@@ -5,7 +5,7 @@ from src.utility import (
     pad2D,
     calc_convoluted_shape,
     calc_input_shape_with_padding,
-    generate_strided_matrix2d
+    generate_strided_matrix2d,
 )
 
 
@@ -136,7 +136,9 @@ class MaxPooling2D(Layer):
             pool_index.append(index2D)
 
         out = np.array(out)  # out (Array(batch, row, col, channel))
-        self.pooling_index = np.array(pool_index) # Array(batch, row, col, index, channel)
+        self.pooling_index = np.array(
+            pool_index
+        )  # Array(batch, row, col, index, channel)
         self.output = out
         return out
 
@@ -160,8 +162,10 @@ class MaxPooling2D(Layer):
         for index_x, error in zip(self.pooling_index, errors):
             deriv2D = []
             # matrix_idx (Array(row, col, index)) matrix_err (Array(row,col))
-            for matrix_idx, matrix_err in zip(np.rollaxis(index_x, 3), np.rollaxis(error, 2)): 
-                deriv = np.zeros(self.input_shape[:2]) # deriv (Array(row, col))
+            for matrix_idx, matrix_err in zip(
+                np.rollaxis(index_x, 3), np.rollaxis(error, 2)
+            ):
+                deriv = np.zeros(self.input_shape[:2])  # deriv (Array(row, col))
                 out_x, out_y = matrix_idx.shape[:2]
                 for x2 in range(out_x):
                     for y2 in range(out_y):
@@ -172,12 +176,11 @@ class MaxPooling2D(Layer):
                         idx_x = start_x + matrix_idx[x2][y2][0]
                         idx_y = start_y + matrix_idx[x2][y2][1]
 
-                        deriv[idx_x][idx_y] = matrix_err[x2][y2] 
+                        deriv[idx_x][idx_y] = matrix_err[x2][y2]
                 deriv2D.append(deriv)
-            deriv2D = np.stack(deriv2D, axis=-1) 
+            deriv2D = np.stack(deriv2D, axis=-1)
             # deriv2D (Array(row, col, channels))
-            derivative.append(deriv2D) # derivative (Array(batch, row, col, channels))
+            derivative.append(deriv2D)  # derivative (Array(batch, row, col, channels))
 
-        derivative = np.array(derivative)        
+        derivative = np.array(derivative)
         return derivative
-
