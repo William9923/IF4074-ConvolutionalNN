@@ -158,6 +158,10 @@ class MaxPooling2D(Layer):
 
         """
         derivative = []
+        top_pad, bot_pad, left_pad, right_pad = self._padding
+        right_pad -= self.input_shape[0]
+        bot_pad -= self.input_shape[1]
+
         # index_x (Array(row, col, index, channel)) error (Array(row, col, channels))
         for index_x, error in zip(self.pooling_index, errors):
             deriv2D = []
@@ -177,7 +181,9 @@ class MaxPooling2D(Layer):
                         idx_y = start_y + matrix_idx[x2][y2][1]
 
                         deriv[idx_x][idx_y] = matrix_err[x2][y2]
-                deriv2D.append(deriv)
+                
+                unpadded_deriv = deriv[left_pad:-right_pad, top_pad:-bot_pad]
+                deriv2D.append(unpadded_deriv)
             deriv2D = np.stack(deriv2D, axis=-1)
             # deriv2D (Array(row, col, channels))
             derivative.append(deriv2D)  # derivative (Array(batch, row, col, channels))
