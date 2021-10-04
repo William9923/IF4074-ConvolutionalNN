@@ -238,13 +238,19 @@ def pooling2D(data, stride, size, shape, type):
         pooled2D (Array(row, col))
     """
     cols = size[0] * size[1]
-    strided_matrix = generate_strided_matrix2d(data, size, stride).reshape(-1, cols)
-    if type == "max":
-        pooled2D = np.max(strided_matrix, axis=-1)
-    else:
-        pooled2D = np.mean(strided_matrix, axis=-1)
+
+    strided_matrix = generate_strided_matrix2d(data, size, stride)
+    max_index = []
+    if type == 'max': 
+        pooled2D = np.max(strided_matrix.reshape(-1, cols), axis=-1)
+        for matrix in strided_matrix:
+            max_index.append(np.unravel_index(matrix.argmax(), matrix.shape))
+        max_index = np.array(max_index).reshape(shape[:2] + (2,))
+    else: 
+        pooled2D = np.mean(strided_matrix.reshape(-1, cols), axis=-1)
+
     pooled2D = pooled2D.reshape(shape[:2])
-    return pooled2D
+    return pooled2D, max_index
 
 
 def split_batch(data, batch_size):
