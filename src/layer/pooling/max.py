@@ -121,7 +121,9 @@ class MaxPooling2D(Layer):
             pooled2D = []
             index2D = []
             for matrix in np.rollaxis(x, 2):  # matrix (Array(row, col))
-                pooled, index = pooling2D(matrix, self.stride, self.size, pooled_sizes, "max")
+                pooled, index = pooling2D(
+                    matrix, self.stride, self.size, pooled_sizes, "max"
+                )
                 pooled2D.append(pooled)
                 # index2D (Array(row, col, index)))
                 index2D.append(index)
@@ -178,3 +180,4 @@ class MaxPooling2D(Layer):
 
         derivative = np.array(derivative)        
         return derivative
+
