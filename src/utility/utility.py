@@ -247,7 +247,7 @@ def pooling2D(data, stride, size, shape, type):
         for matrix in strided_matrix:
             max_index.append(np.unravel_index(matrix.argmax(), matrix.shape))
         max_index = np.array(max_index).reshape(shape[:2] + (2,))
-    else:
+    else: 
         pooled2D = np.mean(strided_matrix.reshape(-1, cols), axis=-1)
 
     pooled2D = pooled2D.reshape(shape[:2])
