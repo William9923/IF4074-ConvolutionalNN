@@ -138,34 +138,27 @@ class MaxPooling2D(Layer):
         self.output = out
         return out
 
-    def backward_propagation(self, error):
+    def backward_propagation(self, errors):
         derivative = []
-        for x in self.pooling_index: # x (Array(row, col, index, channel))
+        for index_x, error in zip(self.pooling_index, errors): # x (Array(row, col, index, channel)) error (Array(row, col, channels))
             deriv2D = []
-            for matrix in np.rollaxis(x, 3): # matrix (Array(row, col, index))
+            for matrix_idx, matrix_err in zip(np.rollaxis(index_x, 3), np.rollaxis(error, 2)): # matrix_idx (Array(row, col, index)) matrix_err (Array(row,col))
                 deriv = np.zeros(self.input_shape[:2]) # deriv (Array(row, col))
-                out_x, out_y = matrix.shape[:2]
+                out_x, out_y = matrix_idx.shape[:2]
                 for x2 in range(out_x):
                     for y2 in range(out_y):
                         start_x = x2 * self.stride[0]
                         start_y = y2 * self.stride[1]
 
                         # index max based on input matrix
-                        idx_x = start_x + matrix[x2][y2][0]
-                        idx_y = start_y + matrix[x2][y2][1]
+                        idx_x = start_x + matrix_idx[x2][y2][0]
+                        idx_y = start_y + matrix_idx[x2][y2][1]
 
-                        deriv[idx_x][idx_y] = 1 # or matrix_input[x][y] ??
+                        deriv[idx_x][idx_y] = matrix_err[x2][y2] * 1 
                 deriv2D.append(deriv)
             deriv2D = np.stack(deriv2D, axis=-1) 
             # deriv2D (Array(row, col, channels))
             derivative.append(deriv2D) # derivative (Array(batch, row, col, channels))
 
-        derivative = np.array(derivative)
-        return error * derivative
-
-                
-        # for x1 in out_x:
-        #     for y1 in out_y:
-        #     for x2 in in_x:
-        #     for y2 in in_y:
-        #     derivative[x1][y1][x2][y2] = derivative(output[x1][y1], input[x2][y2])
+        derivative = np.array(derivative)        
+        return derivative
