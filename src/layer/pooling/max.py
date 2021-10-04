@@ -29,7 +29,7 @@ class MaxPooling2D(Layer):
         build
         padding
         forward_propagation
-        
+
     TODO:
         - Implementing backward propagation
     """

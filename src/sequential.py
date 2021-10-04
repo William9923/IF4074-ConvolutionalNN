@@ -14,6 +14,7 @@ class Sequential:
         name (String)
         is_built (Boolean)
         layers (Array(Layer))
+        opt (Optimizer)
         loss (Callable)
         metrics (Callable)
 
@@ -62,15 +63,17 @@ class Sequential:
             layer.build(cur_input)
             cur_input = layer.output_shape
 
-    def compile(self, loss: Callable, metrics: Callable):
+    def compile(self, opt, loss: Callable, metrics: Callable):
         """
         [Flow-Method]
             Compiling data into the model
 
         [Params]
+            opt (Optimizer class)
             loss (Callable)
             metrics (Callable)
         """
+        self.opt = opt
         self.loss = loss
         self.metrics = metrics
 
