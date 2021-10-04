@@ -98,26 +98,31 @@ class NeuronConv2D:
         [Params]
             error (Array(row, col))
             input (Array(row, col))
-        
+
         [Return]
             dEdW (Array(row, col))
         """
         dilated_error = dilate(error, self._stride)
         dEdW = convolve2D(input, dilated_error)
         return dEdW
-    
+
     def _dEdIn(self, error, kernel):
         """
         [Params]
             error (Array(row, col))
             kernel (Array(row, col))
-        
+
         [Return]
             dEdIn (Array(row, col))
         """
         rotated_kernel = np.rot90(np.rot90(kernel))
         dilated_error = dilate(error, self._stride)
-        padding = (self._kernel_shape[0]-1, self._kernel_shape[0]-1, self._kernel_shape[1]-1, self._kernel_shape[1]-1)
+        padding = (
+            self._kernel_shape[0] - 1,
+            self._kernel_shape[0] - 1,
+            self._kernel_shape[1] - 1,
+            self._kernel_shape[1] - 1,
+        )
         dEdIn = convolve2D(pad2D(dilated_error, pad=padding), rotated_kernel)
         return dEdIn
 
@@ -154,7 +159,9 @@ class NeuronConv2D:
             dEdWs_batch.append(dEdWs)
             dEdIns_batch.append(dEdIns)
 
-        dEdWs_batch = np.array(dEdWs_batch)  # dEdWs_batch (Array(batch, row, col, channel))
+        dEdWs_batch = np.array(
+            dEdWs_batch
+        )  # dEdWs_batch (Array(batch, row, col, channel))
         dEdIns_batch = np.array(dEdIns_batch)
 
         # Updating weights

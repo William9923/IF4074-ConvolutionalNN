@@ -63,5 +63,18 @@ class Detector(Layer):
         self.output = output
         return output
 
-    def backward_propagation(self):
-        pass
+    def backward_propagation(self, errors):
+        """
+        [Flow-Method]
+            1. Receive partial derivatives from previous layer for each batch
+            2. Apply derivative from next layer error as chain rule to the previous layer
+            3. Propagate the result into previous layer as part of sequential chain rule
+
+        [Params]
+            error (Array(batch, row, columns, channel))
+
+        [Return]
+            propagated_error (Array(batch, row, columns, channel))
+        """
+        deriv_out = self.func(self.output, deriv=True)
+        return deriv_out * errors

@@ -136,6 +136,7 @@ def test_forward_layer_with_college_data():
     )
     assert_array_almost_equal(out, expected_output)
 
+
 @pytest.mark.parametrize(
     "name, batch, errors, layer_params, expected_shape",
     [
@@ -144,7 +145,7 @@ def test_forward_layer_with_college_data():
             np.random.rand(2, 7, 7, 5),
             np.random.rand(2, 5, 5, 3),
             (3, (3, 3), (1, 1), (0, 0, 0, 0), (7, 7, 5)),
-            (2, 7, 7, 5)
+            (2, 7, 7, 5),
         )
     ],
 )

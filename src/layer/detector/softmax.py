@@ -15,11 +15,11 @@ class Softmax(Detector):
     def __init__(self, name="Softmax"):
         super().__init__(self._forward_propagation, name)
 
-    def _forward_propagation(self, batch):
+    def _forward_propagation(self, batch, deriv=False):
         """
         Wrapper function for batch input for softmax activation function
         """
         batch_output = []
         for i in batch:
-            batch_output.append(Activation.softmax(i))
+            batch_output.append(Activation.softmax(i, deriv))
         return np.array(batch_output)

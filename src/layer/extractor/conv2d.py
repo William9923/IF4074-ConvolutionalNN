@@ -168,14 +168,16 @@ class Conv2D(Layer):
             2. Sum dEdIn for every neuron
 
         [Params]
-            errors (batch, row, col, channels) -> row, col, channels based on output_shape, 
+            errors (batch, row, col, channels) -> row, col, channels based on output_shape,
 
         [Return]
             propagated_error (batch, row, col, channels)
         """
         dEdIns = []
-        for neuron, error in zip(self._neurons, np.rollaxis(errors, 3)): # error (Array(batch, row, col))
+        for neuron, error in zip(
+            self._neurons, np.rollaxis(errors, 3)
+        ):  # error (Array(batch, row, col))
             dEdIns.append(neuron.update_weights(SGD(), error))
-        
+
         dEdIns = np.sum(dEdIns, axis=0)
         return dEdIns

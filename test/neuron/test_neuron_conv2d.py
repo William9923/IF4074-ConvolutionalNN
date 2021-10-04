@@ -76,6 +76,7 @@ def test_neuron_conv2d_compute(name, batch, params, expected_output):
     out = neuron.compute(batch)
     assert_array_almost_equal(out, expected_output)
 
+
 @pytest.mark.parametrize(
     "name, batch, errors, neuron_params, expected_shape",
     [
@@ -84,7 +85,7 @@ def test_neuron_conv2d_compute(name, batch, params, expected_output):
             np.random.rand(2, 7, 7, 3),
             np.random.rand(2, 5, 5),
             ((3, 3), (1, 1), (7, 7, 3)),
-            (2, 7, 7, 3)
+            (2, 7, 7, 3),
         )
     ],
 )
