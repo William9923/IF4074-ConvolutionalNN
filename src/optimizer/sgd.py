@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class SGD:
     """
     [Description]
@@ -24,10 +27,14 @@ class SGD:
 
     def update(self, weight, gradient):
         """
-        [Flow-method]
+        [Flow-Method]
             1. Updating velocity with formula
                 velocity = momentum * velocity - learning_rate * gradient
             2. Return weight + velocity
+
+        [Params]
+            weight (float)
+            gradient (float)
 
         [Return]
             updated_weight (float)
@@ -37,3 +44,26 @@ class SGD:
         )
         updated_weight = weight + self._velocity
         return updated_weight
+
+    def update_matrix(self, weight, gradient):
+        """
+        [Notes]
+            Need further research, is summing gradient first,
+            or need one by one to update weight
+
+        [Flow-Method]
+            1. Updating velocity for all gradient first
+            2. Update all weight based on summed gradient
+
+        [Params]
+            weight (Array(row, col))
+            gradient (Array(row, col))
+
+        [Return]
+            udpated_weight (Array(row, col))
+        """
+        self._velocity = self._momentum * self._velocity - self._learning_rate * np.sum(
+            gradient
+        )
+        udpated_weight = weight + self._velocity
+        return udpated_weight

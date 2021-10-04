@@ -105,7 +105,7 @@ def test_forward_layer_conv2d(name, batch, params, expected_output):
     assert_array_almost_equal(out, expected_output)
 
 
-def test_with_college_data():
+def test_forward_layer_with_college_data():
     layer = Conv2D(2, (2, 2), (1, 1), input_shape=(3, 3, 3))
     kernel = kernel_college()
     layer._neurons[0]._kernels[:, :, 0] = kernel[0]
@@ -135,3 +135,22 @@ def test_with_college_data():
         ]
     )
     assert_array_almost_equal(out, expected_output)
+
+
+@pytest.mark.parametrize(
+    "name, batch, errors, layer_params, expected_shape",
+    [
+        (
+            "Test 1 - Test Shape",
+            np.random.rand(2, 7, 7, 5),
+            np.random.rand(2, 5, 5, 3),
+            (3, (3, 3), (1, 1), (0, 0, 0, 0), (7, 7, 5)),
+            (2, 7, 7, 5),
+        )
+    ],
+)
+def test_backward(name, batch, errors, layer_params, expected_shape):
+    layer = Conv2D(*layer_params)
+    layer.forward_propagation(batch)
+    new_err = layer.backward_propagation(errors)
+    assert new_err.shape == expected_shape, "False Shape Output"
