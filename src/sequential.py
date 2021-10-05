@@ -98,10 +98,16 @@ class Sequential:
             raise Exception("No Layer")
 
         out = self.layers[0].forward_propagation(batch)
+        # print(self.layers[0].name)
+        # print(out)
+        # print()
         for layer in self.layers[1:]:
             out = layer.forward_propagation(out)
+            # print(layer.name)
+            # print(out)
+            # print()
         return out
-    
+
     def backward_propagation(self, batch_y_pred, batch_x, batch_y):
         errors = self.loss(batch_y, batch_y_pred, deriv=True)
         for layer in np.flip(self.layers):
@@ -135,21 +141,19 @@ class Sequential:
         print("======================================================================")
         print("Total params: {}".format(params))
 
-    def fit(
-        self,
-        x_train,
-        y_train,
-        batch_size,
-        epochs,
-        verbose=1
-    ):
+    def fit(self, x_train, y_train, batch_size, epochs, verbose=1):
         batches_x = split_batch(x_train, batch_size)
         batches_y = split_batch(y_train, batch_size)
-        
-        for epoch in range(epochs):
-            print(f'{epoch+1}/{epochs} Epochs')
 
-            for batch_x, batch_y in tqdm(zip(batches_x, batches_y), total=len(batches_x)):
+        for epoch in range(epochs):
+            print(f"{epoch+1}/{epochs} Epochs")
+
+            if verbose == 1:
+                iterator = tqdm(zip(batches_x, batches_y), total=len(batches_x))
+            else:
+                iterator = zip(batches_x, batches_y)
+
+            for batch_x, batch_y in iterator:
                 batch_y_pred = self.forward_propagation(batch_x)
                 self.backward_propagation(batch_y_pred, batch_x, batch_y)
 
@@ -158,8 +162,8 @@ class Sequential:
             loss = np.mean(self.loss(y_train, y_pred))
             score = self.metrics(normalize_result(y_train), norm)
 
-            print(f'Loss: {loss}')
-            print(f'Score: {score}')
+            print(f"Loss: {loss}")
+            print(f"Score: {score}")
 
     def predict(self, batch):
         return self.forward_propagation(batch)

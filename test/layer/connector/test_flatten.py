@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 
 from src.layer.connector import Flatten
+from src.optimizer import SGD
 
 
 @pytest.mark.parametrize(
@@ -91,7 +92,7 @@ def test_Flatten_backward_propagation(
     layer = Flatten()
     layer.build(input_shape)
 
-    reverse_output = layer.backward_propagation(error_batch)
+    reverse_output = layer.backward_propagation(SGD(), error_batch)
     assert (
         reverse_output.shape == expected_reverse_shape
     ), f"{name} Expected: {expected_reverse_shape}, Got: {reverse_output.shape}"

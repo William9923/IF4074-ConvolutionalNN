@@ -3,6 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal
 
 from src.layer.detector import Sigmoid
+from src.optimizer import SGD
 
 
 @pytest.mark.parametrize(
@@ -140,7 +141,7 @@ def test_Sigmoid_backward_propagation_shape(
     layer.build(input_shape)
 
     layer.forward_propagation(batch)
-    propagate_error = layer.backward_propagation(errors)
+    propagate_error = layer.backward_propagation(SGD(), errors)
 
     assert_array_almost_equal(
         expected_propagate_error_shape,

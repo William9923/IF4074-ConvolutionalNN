@@ -67,6 +67,11 @@ class SGD:
         udpated_weight = deepcopy(weight)
         for row in range(n_rows):
             for col in range(n_cols):
-                self._velocity = self._momentum * self._velocity * self._learning_rate * gradient[row][col]
+                self._velocity = (
+                    self._momentum
+                    * self._velocity
+                    * self._learning_rate
+                    * gradient[row][col]
+                )
                 udpated_weight[row][col] += self._velocity
         return udpated_weight

@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from src.layer import AveragePooling2D
+from src.optimizer import SGD
 
 matrix = np.array(
     [
@@ -215,7 +216,7 @@ def test_avg_pooling_backprop_shape(
 ):
     layer = AveragePooling2D(*params)
     layer.forward_propagation(batch)
-    propagate_error = layer.backward_propagation(errors)
+    propagate_error = layer.backward_propagation(SGD(), errors)
 
     np.testing.assert_array_almost_equal(
         expected_propagate_error_shape,

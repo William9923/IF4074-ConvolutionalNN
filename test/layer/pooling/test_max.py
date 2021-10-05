@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from src.layer import MaxPooling2D
+from src.optimizer import SGD
 
 matrix = np.array(
     [
@@ -216,7 +217,7 @@ def test_max_pooling_backprop_shape(
     layer = MaxPooling2D(*params)
     layer.build(batch.shape[1:])
     layer.forward_propagation(batch)
-    propagate_error = layer.backward_propagation(errors)
+    propagate_error = layer.backward_propagation(SGD(), errors)
     np.testing.assert_array_almost_equal(
         expected_propagate_error_shape,
         propagate_error.shape,

@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 
 from src.layer import Dense
+from src.optimizer import SGD
 
 
 def data():
@@ -35,7 +36,7 @@ def test_dense_layer(name, params, batch, expected_output_shape):
 def test_backward_prop(name, batch, errors, layer_params, expected_shape):
     layer = Dense(*layer_params)
     layer.forward_propagation(batch)
-    new_err = layer.backward_propagation(errors)
+    new_err = layer.backward_propagation(SGD(), errors)
     assert (
         new_err.shape == expected_shape
     ), f"Expected {expected_shape} got {new_err.shape}"

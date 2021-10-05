@@ -3,6 +3,7 @@ import pytest
 import numpy as np
 
 from src.layer import Conv2D
+from src.optimizer import SGD
 
 
 def data():
@@ -152,5 +153,5 @@ def test_forward_layer_with_college_data():
 def test_backward(name, batch, errors, layer_params, expected_shape):
     layer = Conv2D(*layer_params)
     layer.forward_propagation(batch)
-    new_err = layer.backward_propagation(errors)
+    new_err = layer.backward_propagation(SGD(), errors)
     assert new_err.shape == expected_shape, "False Shape Output"
