@@ -161,13 +161,14 @@ class Conv2D(Layer):
         self.output = np.array(output)
         return output
 
-    def backward_propagation(self, errors):
+    def backward_propagation(self, opt, errors):
         """
         [Flow-Method]
             1. Compute dEdIn for every neuron
             2. Sum dEdIn for every neuron
 
         [Params]
+            opt (Optimizer)
             errors (batch, row, col, channels) -> row, col, channels based on output_shape,
 
         [Return]
@@ -177,7 +178,7 @@ class Conv2D(Layer):
         for neuron, error in zip(
             self._neurons, np.rollaxis(errors, 3)
         ):  # error (Array(batch, row, col))
-            dEdIns.append(neuron.update_weights(SGD(), error))
+            dEdIns.append(neuron.update_weights(opt, error))
 
         dEdIns = np.sum(dEdIns, axis=0)
         return dEdIns

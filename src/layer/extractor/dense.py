@@ -75,13 +75,14 @@ class Dense(Layer):
 
         return output
 
-    def backward_propagation(self, errors):
+    def backward_propagation(self, opt, errors):
         """
         [Flow-Method]
             1. Compute dEdIn for each neuron while updating the weights
             2. Sum dEdIns for each neuron
 
         [Params]
+            opt (Optimizer)
             errors (Array(batch, data)) -> data is an integer based on the output shape
 
         [Return]
@@ -89,6 +90,6 @@ class Dense(Layer):
         """
         dEdIns = []
         for neuron, error in zip(self._neurons, np.rollaxis(errors, 1)):
-            dEdIns.append(neuron.update_weights(SGD(), error))
+            dEdIns.append(neuron.update_weights(opt, error))
         dEdIns = np.sum(dEdIns, axis=0)
         return dEdIns

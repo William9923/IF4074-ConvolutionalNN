@@ -62,13 +62,14 @@ class Flatten(Layer):
         self.output = output
         return output
 
-    def backward_propagation(self, error):
+    def backward_propagation(self, opt, error):
         """
         [Flow-Method]
             1. Get the input shape (row x column x channel)
             2. Reshape the error into correct shape for previous layer
 
         [Param]
+            opt (Optimizer)
             error (Array(batch, row))
 
         [Return]
