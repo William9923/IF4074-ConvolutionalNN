@@ -10,6 +10,8 @@ class NeuronDense:
     [Attributes]
         _input_shape (int)  -> The shape of the input
         _bias (float)       -> Bias for the weight
+        input (Array(batch, data)) -> The input from previous layer
+        output (Array(batch, data)) -> The output (including bias) of the neuron
         weights (Array(row, col))
 
     [Method]
@@ -54,5 +56,26 @@ class NeuronDense:
         [Return]
             out (Array(batch, output_data))
         """
+        self.input = batch
         out = (np.sum(self._weights * batch, axis=1) + self._bias).astype(float)
+        self.output = out
         return out
+
+    def update_weights(self, opt, batch_error):
+        """
+        [Flow-Method]
+            1. Calculate gradient which is Error x dEdW, where dEdW is self.input
+            2. Calculate updated error, Error x dEdIn, where dEdIn is self._weights
+            3. Update the weight with opt update method
+
+        [Params]
+            opt (Optimizer) -> optimizer params from sequential
+            batch_error (Array(batch)) -> 1D array consists of error value of every output (length of batch_error is the same as _input_shape)
+        """
+        dEdW = (batch_error * self.input.T).T
+        dEdIn = batch_error.reshape(-1, 1) @ self._weights.reshape(1, -1)
+
+        gradient = np.sum(dEdW, axis=0)
+        for i in range(len(self._weights)):
+            self._weights[i] = opt.update(self._weights[i], gradient[i])
+        return dEdIn
