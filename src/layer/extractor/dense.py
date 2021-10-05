@@ -4,6 +4,7 @@ from src.layer.interface import Layer
 from src.neuron import NeuronDense
 from src.optimizer import SGD
 from src.utility import calc_params_dense
+from src.optimizer import SGD
 
 
 class Dense(Layer):

@@ -1,6 +1,8 @@
 from typing import Callable
+import numpy as np
+from tqdm import tqdm
 
-from src.utility import split_batch
+from src.utility import split_batch, normalize_result
 import timeit
 
 
@@ -99,6 +101,18 @@ class Sequential:
         for layer in self.layers[1:]:
             out = layer.forward_propagation(out)
         return out
+    
+    def backward_propagation(self, batch_y_pred, batch_x, batch_y):
+        errors = []
+        losses = []
+        for y_true, y_pred in zip(batch_y, batch_y_pred):
+            losses.append(self.loss(y_true, y_pred))
+            errors.append(self.loss(y_true, y_pred, deriv=True))
+        
+
+        errors = np.array(errors)
+        for layer in np.flip(self.layers):
+            errors = layer.backward_propagation(self.opt, errors)
 
     def summary(self):
         """
@@ -133,12 +147,25 @@ class Sequential:
         x_train,
         y_train,
         batch_size,
-        learning_rate,
         epochs,
-        validation_data,
-        verbose,
+        verbose=1
     ):
-        pass
+        batches_x = split_batch(x_train, batch_size)
+        batches_y = split_batch(y_train, batch_size)
+        
+        for epoch in range(epochs):
+            print(f'{epoch+1}/{epochs} Epochs')
+
+            for batch_x, batch_y in tqdm(zip(batches_x, batches_y), total=len(batches_x)):
+                batch_y_pred = self.forward_propagation(batch_x)
+                self.backward_propagation(batch_y_pred, batch_x, batch_y)
+                
+            y_pred = self.forward_propagation(x_train)
+            norm = normalize_result(y_pred)
+            loss = np.mean(self.loss(y_train, y_pred))
+            score = self.metrics(normalize_result(y_train), norm)
+            print(f'Loss: {loss}')
+            print(f'Score: {score}')
 
     def predict(self, batch):
         return self.forward_propagation(batch)

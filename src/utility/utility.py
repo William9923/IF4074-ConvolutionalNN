@@ -267,7 +267,7 @@ def split_batch(data, batch_size):
         batch_size (Integer) -> batch size
 
     [Return]
-        array (Array(batches, batch, row, col, channels ))
+        array (Array(batches, batch, row, col, channels))
     """
     batches = []
     n_data = data.shape[0]

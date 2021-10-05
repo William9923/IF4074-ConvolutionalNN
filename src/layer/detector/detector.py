@@ -77,5 +77,5 @@ class Detector(Layer):
         [Return]
             propagated_error (Array(batch, row, columns, channel))
         """
-        deriv_out = self.func(self.output, deriv=True)
+        deriv_out = self.func(self.input, deriv=True)
         return deriv_out * errors
