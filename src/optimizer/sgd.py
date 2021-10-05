@@ -16,7 +16,7 @@ class SGD:
         update
     """
 
-    def __init__(self, learning_rate=1e-3, momentum=0.1):
+    def __init__(self, learning_rate=1e-1, momentum=0.1):
         """
         [Params]
             learning_rate (float) -> Learning rate used for updating weight

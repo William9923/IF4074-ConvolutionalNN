@@ -85,9 +85,7 @@ class NeuronConv2D:
             out.append(convoluted)
 
         out = np.array(out)  # out (Array(batch, row, col, channel))
-        self.raw_output = out
         out = np.sum(out, axis=-1)  # out (Array(batch, row, col))
-        self.output_without_bias = out
         out += self._bias
 
         self.output = out
