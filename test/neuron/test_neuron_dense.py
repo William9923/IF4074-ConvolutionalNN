@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 
 from src.neuron import NeuronDense
+from src.optimizer import SGD
 
 
 def data():
@@ -32,3 +33,24 @@ def test_compute_dense_neuron(name, input_shape, batch, expected_output):
     out = neuron.compute(batch)
 
     assert (out == expected_output).all(), f"Wrong Output"
+
+
+@pytest.mark.parametrize(
+    "name, batch, errors, neuron_params, expected_shape",
+    [
+        (
+            "Test 1 - Test Shape",
+            np.random.rand(2, 4),
+            np.random.rand(2),
+            4,
+            (2, 4),
+        )
+    ],
+)
+def test_neuron_dense_backprop(name, batch, errors, neuron_params, expected_shape):
+    neuron = NeuronDense(neuron_params)
+    neuron.compute(batch)
+    new_err = neuron.update_weights(SGD(), errors)
+    assert (
+        new_err.shape == expected_shape
+    ), f"Expected {expected_shape} got {new_err.shape}"

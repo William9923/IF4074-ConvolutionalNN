@@ -11,3 +11,7 @@ cover:
 
 format:
 	python -m black .
+
+cleanup:
+	py3clean . && \
+		rm .coverage

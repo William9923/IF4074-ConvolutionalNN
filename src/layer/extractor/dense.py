@@ -2,6 +2,7 @@ import numpy as np
 
 from src.layer.interface import Layer
 from src.neuron import NeuronDense
+from src.optimizer import SGD
 from src.utility import calc_params_dense
 
 
@@ -23,9 +24,7 @@ class Dense(Layer):
     [Method]
         build
         forward_propagation
-
-    TODO:
-        - Implementing backward propagation
+        backward_propagation
     """
 
     def __init__(self, unit, input_shape=None, name="dense"):
@@ -75,3 +74,21 @@ class Dense(Layer):
         self.output = output
 
         return output
+
+    def backward_propagation(self, errors):
+        """
+        [Flow-Method]
+            1. Compute dEdIn for each neuron while updating the weights
+            2. Sum dEdIns for each neuron
+
+        [Params]
+            errors (Array(batch, data)) -> data is an integer based on the output shape
+
+        [Return]
+            propagated_error (batch, data)
+        """
+        dEdIns = []
+        for neuron, error in zip(self._neurons, np.rollaxis(errors, 1)):
+            dEdIns.append(neuron.update_weights(SGD(), error))
+        dEdIns = np.sum(dEdIns, axis=0)
+        return dEdIns
