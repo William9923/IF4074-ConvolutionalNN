@@ -18,3 +18,6 @@ cleanup:
 
 complexity:
 	radon cc src main.py -a
+	
+run-main:
+	python main.py

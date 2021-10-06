@@ -98,17 +98,11 @@ class Sequential:
             raise Exception("No Layer")
 
         out = self.layers[0].forward_propagation(batch)
-        # print(self.layers[0].name)
-        # print(out)
-        # print()
         for layer in self.layers[1:]:
             out = layer.forward_propagation(out)
-            # print(layer.name)
-            # print(out)
-            # print()
         return out
 
-    def backward_propagation(self, batch_y_pred, batch_x, batch_y):
+    def backward_propagation(self, batch_y_pred, batch_y):
         errors = self.loss(batch_y, batch_y_pred, deriv=True)
         for layer in np.flip(self.layers):
             errors = layer.backward_propagation(self.opt, errors)
@@ -146,24 +140,38 @@ class Sequential:
         batches_y = split_batch(y_train, batch_size)
 
         for epoch in range(epochs):
-            print(f"{epoch+1}/{epochs} Epochs")
 
-            if verbose == 1:
-                iterator = tqdm(zip(batches_x, batches_y), total=len(batches_x))
-            else:
-                iterator = zip(batches_x, batches_y)
-
-            for batch_x, batch_y in iterator:
+            iterator = zip(batches_x, batches_y)
+            total = len(batches_x)
+            cur_loss = 0
+            cur_score = 0
+            cur_calc_data = 0
+            for i, (batch_x, batch_y) in enumerate(iterator):
                 batch_y_pred = self.forward_propagation(batch_x)
-                self.backward_propagation(batch_y_pred, batch_x, batch_y)
+                self.backward_propagation(batch_y_pred, batch_y)
 
-            y_pred = self.forward_propagation(x_train)
-            norm = normalize_result(y_pred)
-            loss = np.mean(self.loss(y_train, y_pred))
-            score = self.metrics(normalize_result(y_train), norm)
+                loss = self.loss(batch_y, batch_y_pred)
+                score = self.metrics(
+                    normalize_result(batch_y), normalize_result(batch_y_pred)
+                )
 
-            print(f"Loss: {loss}")
-            print(f"Score: {score}")
+                num_data = len(batch_x)
+                cur_calc_data += num_data
+                cur_loss += loss * num_data
+                cur_score += score * num_data
+
+                if verbose == 1:
+                    end = "\n" if i + 1 == total else "\r"
+                    loss = cur_loss / cur_calc_data
+                    score = cur_score / cur_calc_data
+                    print(
+                        f"Epochs {epoch+1}/{epochs}\tProgress({i+1}/{total})\tLoss: {loss:.4f}\tScores: {score:.4f}",
+                        end=end,
+                    )
+
+    def predict_proba(self, batch):
+        return self.forward_propagation(batch)
 
     def predict(self, batch):
-        return self.forward_propagation(batch)
+        out = normalize_result(self.predict_proba(batch))
+        return out

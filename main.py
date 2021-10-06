@@ -4,7 +4,7 @@ from mlxtend.data import loadlocal_mnist
 
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import KFold
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 from src.layer import Conv2D, MaxPooling2D, Flatten, Dense, ReLU, Sigmoid, Softmax
 from src.sequential import Sequential
@@ -14,14 +14,39 @@ from src.metrics import Metrics
 from src.utility import normalize_result, split_batch
 
 
-def cross_validation(model, x, y, batch_size=32, epochs=2, fold=10, shuffle=True, random_state=42):
+def cross_validation(
+    x, y, batch_size=32, epochs=2, fold=10, shuffle=True, random_state=42
+):
     kfold = KFold(n_splits=fold, shuffle=shuffle, random_state=random_state)
-    for train_index, test_index in kfold.split(x, y):
+    for i, (train_index, test_index) in enumerate(kfold.split(x, y)):
+        print(f'Fold {i+1}/{fold}')
+        
+        # Build Model
+        model = create_model()
+        input_shape = (x.shape[1], x.shape[2], x.shape[3])
+        model.build(input_shape)
+        model.summary()
+
+        # Compiling
+        opt = SGD()
+        loss = Loss.categorical_cross_entropy
+        model.compile(opt, loss, Metrics.accuracy)
+        
         X_train, X_test = x[train_index], x[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
         model.fit(X_train, y_train, batch_size, epochs)
-        y_pred = model.predict()
+        y_pred = model.predict(X_test)
+        y_true = normalize_result(y_test)
+
+        score = accuracy_score(y_true, y_pred)
+        confusion = confusion_matrix(y_true, y_pred)
+
+        print(f'Score: {score}')
+        print('Confusion')
+        print(confusion)
+        print()
+
 
 def create_model():
     model = Sequential()
@@ -33,7 +58,8 @@ def create_model():
     model.add(Softmax())
     return model
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     x, labels = loadlocal_mnist(
         images_path="images/train-images.idx3-ubyte",
@@ -46,18 +72,7 @@ if __name__ == '__main__':
     x = x.reshape(-1, row, col, 1) * 1.0 / 255
     y = encoder.fit_transform(np.array(labels).reshape(-1, 1)).toarray()
 
-    # Build Model
-    model = create_model()
-    input_shape = (x.shape[1], x.shape[2], x.shape[3])
-    model.build(input_shape)
-    model.summary()
-
-    # Compiling
-    opt = SGD()
-    loss = Loss.categorical_cross_entropy
-    model.compile(opt, loss, Metrics.accuracy)
-
-    cross_validation(model, x, y)
+    cross_validation(x, y)
 
     # Training
     # model.fit(x, y, 32, 2)
