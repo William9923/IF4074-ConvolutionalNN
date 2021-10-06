@@ -23,7 +23,6 @@ row, col = 28, 28
 encoder = OneHotEncoder()
 
 x = x.reshape(-1, row, col, 1) * 1.0 / 255
-
 y = encoder.fit_transform(np.array(labels).reshape(-1, 1)).toarray()
 
 model = Sequential()
@@ -53,7 +52,7 @@ split_data = split_batch(x, 4)
 outs = []
 norms = []
 for splitted in tqdm(split_data):
-    out = model.predict(splitted)
+    out = model.predict_proba(splitted)
     norm_res = normalize_result(out)
 
     norms.append(norm_res)

@@ -15,3 +15,6 @@ format:
 cleanup:
 	py3clean . && \
 		rm .coverage
+
+run-main:
+	python main.py

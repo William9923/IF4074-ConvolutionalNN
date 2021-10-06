@@ -165,5 +165,12 @@ class Sequential:
             print(f"Loss: {loss}")
             print(f"Score: {score}")
 
-    def predict(self, batch):
+    def predict_proba(self, batch):
         return self.forward_propagation(batch)
+
+    def predict(self, batch):
+        out = normalize_result(self.predict_proba(batch))
+        return out
+
+    # def predict(self, batch):
+    #     return self.forward_propagation(batch)
