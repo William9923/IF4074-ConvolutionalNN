@@ -273,12 +273,12 @@ def split_batch(data, batch_size):
     n_data = data.shape[0]
     n_batch = n_data // batch_size
 
-    for i in range(batch_size):
-        start = n_batch * i
-        if i == batch_size - 1:
+    for i in range(n_batch):
+        start = batch_size * i
+        if i == n_batch - 1:
             mini_batch = data[start:]
         else:
-            end = start + n_batch
+            end = start + batch_size
             mini_batch = data[start:end]
         batches.append(mini_batch)
 
