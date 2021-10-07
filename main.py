@@ -171,9 +171,9 @@ def train_main():
     row, col = 28, 28
     encoder = OneHotEncoder()
 
-    # Uncomment if too long
-    x = x[:100]
-    labels = labels[:100]
+    # # Uncomment if too long
+    # x = x[:100]
+    # labels = labels[:100]
 
     # Preprocessing
     x = x.reshape(-1, row, col, 1) * 1.0 / 255
@@ -191,9 +191,9 @@ def test_main(filename, folder="bin"):
     row, col = 28, 28
     x = x.reshape(-1, row, col, 1) * 1.0 / 255
 
-    # Uncomment if too long
-    x = x[:100]
-    labels = labels[:100]
+    # # Uncomment if too long
+    # x = x[:100]
+    # labels = labels[:100]
 
     model = load_model(os.path.join(folder, filename))
 
