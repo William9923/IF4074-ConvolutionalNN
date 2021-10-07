@@ -168,7 +168,7 @@ class NeuronConv2D:
             zip(np.rollaxis(self._kernels, 2), np.rollaxis(gradients, 2))
         ):
             self._kernels[:, :, i] = opt.update_matrix(kernel2d, gradient2d)
-        
+
         # Updating bias
         dEdB = batch_error
         bias_gradient = np.mean(dEdB)

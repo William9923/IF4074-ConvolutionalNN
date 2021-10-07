@@ -1,5 +1,6 @@
 import numpy as np
 import timeit
+import pickle
 
 from copy import deepcopy
 
@@ -316,3 +317,24 @@ def calc_params_dense(input_shape, unit):
         output (int)
     """
     return (input_shape * unit) + unit
+
+
+def save_model(model, path):
+    """
+    Function to save model
+
+    [Params]
+        model (Obj)
+        path (str)
+    """
+    pickle.dump(model, open(path, "wb"))
+
+
+def load_model(path):
+    """
+    Function to load model
+
+    [Params]
+        path (str)
+    """
+    return pickle.load(open(path, "rb"))

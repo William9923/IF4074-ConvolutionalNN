@@ -134,6 +134,7 @@ class Sequential:
                 )
         print("======================================================================")
         print("Total params: {}".format(params))
+        print("======================================================================")
 
     def fit(self, x_train, y_train, batch_size, epochs, verbose=1):
         batches_x = split_batch(x_train, batch_size)
