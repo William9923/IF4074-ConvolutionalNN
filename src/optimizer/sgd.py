@@ -61,10 +61,10 @@ class SGD:
             gradient (Array(row, col))
 
         [Return]
-            udpated_weight (Array(row, col))
+            updated_weight (Array(row, col))
         """
         n_rows, n_cols = weight.shape
-        udpated_weight = deepcopy(weight)
+        updated_weight = deepcopy(weight)
         for row in range(n_rows):
             for col in range(n_cols):
                 self._velocity = (
@@ -73,5 +73,5 @@ class SGD:
                     * self._learning_rate
                     * gradient[row][col]
                 )
-                udpated_weight[row][col] += self._velocity
-        return udpated_weight
+                updated_weight[row][col] += self._velocity
+        return updated_weight
