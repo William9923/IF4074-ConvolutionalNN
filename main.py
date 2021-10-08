@@ -156,7 +156,7 @@ def cross_validation(
     if keep_best_model:
         filename = f"cross_validation_best_model.pkl"
         save_model(
-            model,
+            best_model,
             os.path.join(folder, filename),
         )
 
