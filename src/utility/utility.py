@@ -1,5 +1,6 @@
 import numpy as np
 import timeit
+import pickle
 
 from copy import deepcopy
 
@@ -267,18 +268,18 @@ def split_batch(data, batch_size):
         batch_size (Integer) -> batch size
 
     [Return]
-        array (Array(batches, batch, row, col, channels ))
+        array (Array(batches, batch, row, col, channels))
     """
     batches = []
     n_data = data.shape[0]
     n_batch = n_data // batch_size
 
-    for i in range(batch_size):
-        start = n_batch * i
-        if i == batch_size - 1:
+    for i in range(n_batch):
+        start = batch_size * i
+        if i == n_batch - 1:
             mini_batch = data[start:]
         else:
-            end = start + n_batch
+            end = start + batch_size
             mini_batch = data[start:end]
         batches.append(mini_batch)
 
@@ -316,3 +317,24 @@ def calc_params_dense(input_shape, unit):
         output (int)
     """
     return (input_shape * unit) + unit
+
+
+def save_model(model, path):
+    """
+    Function to save model
+
+    [Params]
+        model (Obj)
+        path (str)
+    """
+    pickle.dump(model, open(path, "wb"))
+
+
+def load_model(path):
+    """
+    Function to load model
+
+    [Params]
+        path (str)
+    """
+    return pickle.load(open(path, "rb"))

@@ -7,7 +7,7 @@ from src.layer.detector.detector import Detector
 class Softmax(Detector):
     """
     [Description]
-        Perform ReLU function as activation for output from previous layer
+        Perform Softmax function as activation for output from previous layer
         - Used after the Conv Layer as detection phase in CNN.
         - Used after the Dense Layer as activation func in Dense.
     """

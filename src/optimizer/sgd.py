@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 
 class SGD:
@@ -15,7 +16,7 @@ class SGD:
         update
     """
 
-    def __init__(self, learning_rate=1e-3, momentum=0.1):
+    def __init__(self, learning_rate=1e-1, momentum=0.1):
         """
         [Params]
             learning_rate (float) -> Learning rate used for updating weight
@@ -60,10 +61,17 @@ class SGD:
             gradient (Array(row, col))
 
         [Return]
-            udpated_weight (Array(row, col))
+            updated_weight (Array(row, col))
         """
-        self._velocity = self._momentum * self._velocity - self._learning_rate * np.sum(
-            gradient
-        )
-        udpated_weight = weight + self._velocity
-        return udpated_weight
+        n_rows, n_cols = weight.shape
+        updated_weight = deepcopy(weight)
+        for row in range(n_rows):
+            for col in range(n_cols):
+                self._velocity = (
+                    self._momentum
+                    * self._velocity
+                    * self._learning_rate
+                    * gradient[row][col]
+                )
+                updated_weight[row][col] += self._velocity
+        return updated_weight

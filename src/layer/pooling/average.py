@@ -128,7 +128,7 @@ class AveragePooling2D(Layer):
         self.output = out
         return out
 
-    def backward_propagation(self, errors):
+    def backward_propagation(self, opt, errors):
         """
         [Flow-Method]
            1. Receive errors from next layer as partial derivative error
@@ -137,7 +137,9 @@ class AveragePooling2D(Layer):
                 2. Spread the gradient error into each convoluted area from kernel
                 3. Slice through any additional padding to get the non-padded input shaped errors
             3. Propagate errors back to previous layer
+
         [Params]
+            opt (Optimizer)
             errors (Array(batch, row, columns, channels))
 
         [Return]

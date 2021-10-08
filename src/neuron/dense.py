@@ -75,7 +75,14 @@ class NeuronDense:
         dEdW = (batch_error * self.input.T).T
         dEdIn = batch_error.reshape(-1, 1) @ self._weights.reshape(1, -1)
 
-        gradient = np.sum(dEdW, axis=0)
+        # Update Weight
+        gradient = np.mean(dEdW, axis=0)
         for i in range(len(self._weights)):
             self._weights[i] = opt.update(self._weights[i], gradient[i])
+
+        # Update Bias
+        dEdB = batch_error
+        bias_gradient = np.mean(dEdB)
+        self._bias = opt.update(self._bias, bias_gradient)
+
         return dEdIn

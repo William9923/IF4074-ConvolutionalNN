@@ -85,9 +85,7 @@ class NeuronConv2D:
             out.append(convoluted)
 
         out = np.array(out)  # out (Array(batch, row, col, channel))
-        self.raw_output = out
         out = np.sum(out, axis=-1)  # out (Array(batch, row, col))
-        self.output_without_bias = out
         out += self._bias
 
         self.output = out
@@ -139,7 +137,7 @@ class NeuronConv2D:
 
         [Params]
             opt (Optimizer) -> optimizer params from sequential
-            batch_error (Array(batch, row, col, channel)) -> row and col based on _kernels_shape
+            batch_error (Array(batch, row, col)) -> row and col based on _kernels_shape
         """
         dEdWs_batch, dEdIns_batch = [], []
         for input, matrix_error in zip(
@@ -165,9 +163,15 @@ class NeuronConv2D:
         dEdIns_batch = np.array(dEdIns_batch)
 
         # Updating weights
-        gradients = np.sum(dEdWs_batch, axis=0)
+        gradients = np.mean(dEdWs_batch, axis=0)
         for i, (kernel2d, gradient2d) in enumerate(
             zip(np.rollaxis(self._kernels, 2), np.rollaxis(gradients, 2))
         ):
             self._kernels[:, :, i] = opt.update_matrix(kernel2d, gradient2d)
+
+        # Updating bias
+        dEdB = batch_error
+        bias_gradient = np.mean(dEdB)
+        self._bias = opt.update(self._bias, bias_gradient)
+
         return dEdIns_batch

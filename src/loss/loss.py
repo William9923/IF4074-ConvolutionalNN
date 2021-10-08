@@ -92,6 +92,7 @@ class Loss:
             output scalar(float64) | Array(float64) for derivative
         """
         assert len(y_true) == len(y_pred)
+        y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
         if deriv:
             return np.array(
                 [
@@ -99,7 +100,6 @@ class Loss:
                     for true, pred in zip(y_true, y_pred)
                 ]
             )
-        y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
         N = y_pred.shape[0]
         ce = -np.sum(y_true * np.log(y_pred)) / N
         return ce

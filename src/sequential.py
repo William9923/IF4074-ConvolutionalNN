@@ -1,6 +1,8 @@
 from typing import Callable
+import numpy as np
+from tqdm import tqdm
 
-from src.utility import split_batch
+from src.utility import split_batch, normalize_result
 import timeit
 
 
@@ -100,6 +102,11 @@ class Sequential:
             out = layer.forward_propagation(out)
         return out
 
+    def backward_propagation(self, batch_y_pred, batch_y):
+        errors = self.loss(batch_y, batch_y_pred, deriv=True)
+        for layer in np.flip(self.layers):
+            errors = layer.backward_propagation(self.opt, errors)
+
     def summary(self):
         """
         [Flow-Method]
@@ -127,18 +134,45 @@ class Sequential:
                 )
         print("======================================================================")
         print("Total params: {}".format(params))
+        print("======================================================================")
 
-    def fit(
-        self,
-        x_train,
-        y_train,
-        batch_size,
-        learning_rate,
-        epochs,
-        validation_data,
-        verbose,
-    ):
-        pass
+    def fit(self, x_train, y_train, batch_size, epochs, verbose=1):
+        batches_x = split_batch(x_train, batch_size)
+        batches_y = split_batch(y_train, batch_size)
+
+        for epoch in range(epochs):
+
+            iterator = zip(batches_x, batches_y)
+            total = len(batches_x)
+            cur_loss = 0
+            cur_score = 0
+            cur_calc_data = 0
+            for i, (batch_x, batch_y) in enumerate(iterator):
+                batch_y_pred = self.forward_propagation(batch_x)
+                self.backward_propagation(batch_y_pred, batch_y)
+
+                loss = self.loss(batch_y, batch_y_pred)
+                score = self.metrics(
+                    normalize_result(batch_y), normalize_result(batch_y_pred)
+                )
+
+                num_data = len(batch_x)
+                cur_calc_data += num_data
+                cur_loss += loss * num_data
+                cur_score += score * num_data
+
+                if verbose == 1:
+                    end = "\n" if i + 1 == total else "\r"
+                    loss = cur_loss / cur_calc_data
+                    score = cur_score / cur_calc_data
+                    print(
+                        f"Epochs {epoch+1}/{epochs}\tProgress({i+1}/{total})\tLoss: {loss:.4f}\tScores: {score:.4f}",
+                        end=end,
+                    )
+
+    def predict_proba(self, batch):
+        return self.forward_propagation(batch)
 
     def predict(self, batch):
-        return self.forward_propagation(batch)
+        out = normalize_result(self.predict_proba(batch))
+        return out

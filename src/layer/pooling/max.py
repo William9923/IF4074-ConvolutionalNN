@@ -142,7 +142,7 @@ class MaxPooling2D(Layer):
         self.output = out
         return out
 
-    def backward_propagation(self, errors):
+    def backward_propagation(self, opt, errors):
         """
         [Flow-Method]
             1. Iterate per batch and per channels (for pooling index and errors)
@@ -150,7 +150,9 @@ class MaxPooling2D(Layer):
                 2. Get argmax index for each output value from self.pooling_index
                 3. Fill the deriv matrix with argmax index with error value
             2. Create derivative 4d arrays with deriv matrix, channels, and batch
+
         [Params]
+            opt (Optimizer)
             errors (Array(batch, row, columns, channels))
 
         [Return]
@@ -181,7 +183,7 @@ class MaxPooling2D(Layer):
                         idx_y = start_y + matrix_idx[x2][y2][1]
 
                         deriv[idx_x][idx_y] = matrix_err[x2][y2]
-                
+
                 unpadded_deriv = deriv[left_pad:-right_pad, top_pad:-bot_pad]
                 deriv2D.append(unpadded_deriv)
             deriv2D = np.stack(deriv2D, axis=-1)
